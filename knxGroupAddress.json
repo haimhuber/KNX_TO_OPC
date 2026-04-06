@@ -1,0 +1,221 @@
+{
+    "gateways": [
+        {
+            "IPRS": "192.168.1.102",
+            "points": [
+                {
+                    "ga": "28/1/0",
+                    "dst": "Floor_1_Control_Tech_Tecteo"
+                },
+                {
+                    "ga": "28/1/1",
+                    "dst": "Floor_1_Control_Tech_Sensor"
+                },
+                {
+                    "ga": "28/1/2",
+                    "dst": "Floor_1_Control_Tech_FCU"
+                },
+                {
+                    "ga": "28/1/3",
+                    "dst": "Floor_1_Control_Tech_Acc"
+                },
+                {
+                    "ga": "28/1/4",
+                    "dst": "Floor_1_Control_Front_Tecteo"
+                },
+                {
+                    "ga": "28/1/5",
+                    "dst": "Floor_1_Control_Front_FCU"
+                },
+                {
+                    "ga": "28/1/6",
+                    "dst": "Floor_1_Control_Sales_Tecteo"
+                },
+                {
+                    "ga": "28/1/7",
+                    "dst": "Floor_1_Control_Sales_Sensor"
+                },
+                {
+                    "ga": "28/1/8",
+                    "dst": "Floor_1_Control_Sales_FCU"
+                },
+                {
+                    "ga": "28/1/9",
+                    "dst": "Floor_1_Control_Sales_Acc"
+                },
+                {
+                    "ga": "28/1/10",
+                    "dst": "Floor_1_Control_Turing_Tecteo"
+                },
+                {
+                    "ga": "28/1/11",
+                    "dst": "Floor_1_Control_Turing_Sensor"
+                },
+                {
+                    "ga": "28/1/12",
+                    "dst": "Floor_1_Control_Turing_FCU"
+                },
+                {
+                    "ga": "28/1/13",
+                    "dst": "Floor_1_PB121_Tecteo"
+                },
+                {
+                    "ga": "28/1/14",
+                    "dst": "Floor_1_PB121_FCU"
+                },
+                {
+                    "ga": "28/1/15",
+                    "dst": "Floor_1_PB121_Sensor"
+                },
+                {
+                    "ga": "28/1/16",
+                    "dst": "Floor_1_PB123_Tecteo"
+                },
+                {
+                    "ga": "28/1/17",
+                    "dst": "Floor_1_PB123_Sensor"
+                },
+                {
+                    "ga": "28/1/18",
+                    "dst": "Floor_1_Bell_Tecteo"
+                },
+                {
+                    "ga": "28/1/19",
+                    "dst": "Floor_1_Bell_Sensor"
+                },
+                {
+                    "ga": "28/1/20",
+                    "dst": "Floor_1_Bell_FCU"
+                },
+                {
+                    "ga": "28/1/21",
+                    "dst": "Floor_1_Weizman_Tecteo"
+                },
+                {
+                    "ga": "28/1/22",
+                    "dst": "Floor_1_Weizman_Sensor"
+                },
+                {
+                    "ga": "28/1/23",
+                    "dst": "Floor_1_Weizman_FCU"
+                },
+                {
+                    "ga": "28/1/24",
+                    "dst": "Floor_1_Brown_Boveri_Tecteo"
+                },
+                {
+                    "ga": "28/1/25",
+                    "dst": "Floor_1_Brown_Boveri_Sensor"
+                },
+                {
+                    "ga": "28/1/26",
+                    "dst": "Floor_1_Brown_Boveri_FCU"
+                },
+                {
+                    "ga": "28/1/27",
+                    "dst": "Floor_1_EL_Service_Tecteo"
+                },
+                {
+                    "ga": "28/1/28",
+                    "dst": "Floor_1_EL_Service_Sensor"
+                },
+                {
+                    "ga": "28/1/29",
+                    "dst": "Floor_1_EL_Service_FCU"
+                },
+                {
+                    "ga": "28/1/30",
+                    "dst": "Floor_1_EL_Service_Lab_Tecteo"
+                },
+                {
+                    "ga": "28/1/31",
+                    "dst": "Floor_1_EL_Service_Lab_Sensor"
+                },
+                {
+                    "ga": "28/1/32",
+                    "dst": "Floor_1_OP_Ofir_Tecteo"
+                },
+                {
+                    "ga": "28/1/33",
+                    "dst": "Floor_1_OP_Ofir_Sensor"
+                },
+                {
+                    "ga": "28/1/34",
+                    "dst": "Floor_1_OP_Ofir_FCU"
+                },
+                {
+                    "ga": "28/1/35",
+                    "dst": "Floor_1_OP_RTU_Tecteo"
+                },
+                {
+                    "ga": "28/1/36",
+                    "dst": "Floor_1_OP_RTU_Sensor"
+                },
+                {
+                    "ga": "28/1/37",
+                    "dst": "Floor_1_OP_RTU_FCU"
+                },
+                {
+                    "ga": "28/1/38",
+                    "dst": "Floor_1_OP_Charges_Tecteo"
+                },
+                {
+                    "ga": "28/1/39",
+                    "dst": "Floor_1_OP_Charges_Sensor"
+                },
+                {
+                    "ga": "28/1/40",
+                    "dst": "Floor_1_OP_Charges_FCU"
+                },
+                {
+                    "ga": "28/1/41",
+                    "dst": "Floor_1_OP_Maya_Tecteo"
+                },
+                {
+                    "ga": "28/1/42",
+                    "dst": "Floor_1_OP_Maya_Sensor"
+                },
+                {
+                    "ga": "28/1/43",
+                    "dst": "Floor_1_OP_Maya_FCU"
+                },
+                {
+                    "ga": "28/1/44",
+                    "dst": "Floor_1_OP_Protection_Tecteo"
+                },
+                {
+                    "ga": "28/1/45",
+                    "dst": "Floor_1_OP_Protection_Sensor"
+                },
+                {
+                    "ga": "28/1/46",
+                    "dst": "Floor_1_OP_Protection_FCU"
+                },
+                {
+                    "ga": "28/1/47",
+                    "dst": "Floor_1_PB_Dennis_Tecteo"
+                },
+                {
+                    "ga": "28/1/48",
+                    "dst": "Floor_1_PB_Dennis_Sensor"
+                },
+                {
+                    "ga": "28/1/49",
+                    "dst": "Floor_1_PB_Dennis_FCU"
+                },
+                {
+                    "ga": "28/1/50",
+                    "dst": "Floor_1_Marie_Curie_Tecteo"
+                },
+                {
+                    "ga": "28/1/51",
+                    "dst": "Floor_1_Marie_Curie_Sensor"
+                },
+                {
+                    "ga": "28/1/52",
+                    "dst": "Floor_1_Marie_Curie_FCU"
+                }
+            ]
+        }
+    ]
+}

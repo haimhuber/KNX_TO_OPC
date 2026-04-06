@@ -1,0 +1,7 @@
+{
+  "type": "module",
+  "dependencies": {
+    "knx": "^2.5.4",
+    "node-opcua": "^2.168.0"
+  }
+}
