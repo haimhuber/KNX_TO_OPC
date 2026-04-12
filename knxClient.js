@@ -110,36 +110,61 @@ function isKnxConnected(ip) {
     return knxConnections.get(ip)?.connected === true;
 }
 
-function readDatapoint(ip, item) {
-    return new Promise((resolve) => {
-        let responded = false;
+async function readDatapoint(ip, item) {
 
-        const timeout = setTimeout(() => {
-            if (!responded) {
-                console.error(`[${ip}] KNX READ TIMEOUT on ${item.ga} (${item.dst})`);
-                resolve(99);
-            }
-        }, READ_TIMEOUT_MS);
+    const MAX_RETRIES = 3;
 
-        try {
-            item.dp.read((src, value) => {
-                if (responded) return;
+    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
 
-                responded = true;
+        const result = await new Promise((resolve) => {
+
+            let responded = false;
+
+            const timeout = setTimeout(() => {
+                if (!responded) {
+                    resolve("timeout");
+                }
+            }, READ_TIMEOUT_MS);
+
+            try {
+                item.dp.read((src, value) => {
+
+                    if (responded) return;
+
+                    responded = true;
+                    clearTimeout(timeout);
+
+                    console.log(
+                        `[${ip}] Read response from ${src} | GA ${item.ga} | ${item.dst} | value =`,
+                        value
+                    );
+
+                    resolve("ok");
+                });
+
+            } catch (err) {
                 clearTimeout(timeout);
+                console.error(`[${ip}] KNX READ ERROR on ${item.ga} (${item.dst}):`, err);
+                resolve("error");
+            }
+        });
 
-                console.log(
-                    `[${ip}] Read response from ${src} | GA ${item.ga} | ${item.dst} | value =`,
-                    value
-                );
-                resolve(1);
-            });
-        } catch (err) {
-            clearTimeout(timeout);
-            console.error(`[${ip}] KNX READ ERROR on ${item.ga} (${item.dst}):`, err);
-            resolve(-1);
+        if (result === "ok") {
+            return 1;
         }
-    });
+
+        if (result === "error") {
+            return -1;
+        }
+
+        console.warn(
+            `[${ip}] Retry ${attempt}/${MAX_RETRIES} failed for ${item.ga}`
+        );
+    }
+
+    console.error(`[${ip}] KNX READ TIMEOUT after ${MAX_RETRIES} attempts on ${item.ga} (${item.dst})`);
+
+    return 99;
 }
 
 function createRuntimePoint(connection, point, ip, namespace, parentFolder) {
