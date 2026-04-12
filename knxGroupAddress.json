@@ -214,6 +214,34 @@
                 {
                     "ga": "28/1/52",
                     "dst": "Floor_1_Marie_Curie_FCU"
+                },
+                 {
+                    "ga": "28/1/53",
+                    "dst": "Floor_1_LV_Front_Tecteo"
+                },
+                {
+                    "ga": "28/1/54",
+                    "dst": "Floor_1_LV_Front_Sensor"
+                },
+                {
+                    "ga": "28/1/55",
+                    "dst": "Floor_1_LV_Front_FCU"
+                },
+                {
+                    "ga": "28/1/56",
+                    "dst": "Floor_1_LV_Left_Tecteo"
+                },
+                {
+                    "ga": "28/1/57",
+                    "dst": "Floor_1_LV_Left_Sensor"
+                },
+                {
+                    "ga": "28/1/58",
+                    "dst": "Floor_1_LV_Right_Tecteo"
+                },
+                {
+                    "ga": "28/1/59",
+                    "dst": "Floor_1_LV_Right_Sensor"
                 }
             ]
         }
