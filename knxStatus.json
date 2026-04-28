@@ -1,0 +1,365 @@
+{
+  "updated": "2026-04-28T16:06:06.475Z",
+  "points": [
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/0",
+      "dst": "ELSB - Tech - Tecteo",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/1",
+      "dst": "ELSB - Tech - Sensor",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/2",
+      "dst": "ELSB - Tech - FCU",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/3",
+      "dst": "ELSB - Tech - Acc",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/4",
+      "dst": "ELSB - Front - Tecteo",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/5",
+      "dst": "ELSB - Front - FCU",
+      "status": 99
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/6",
+      "dst": "ELSB - Sales - Tecteo",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/7",
+      "dst": "ELSB - Sales - Sensor",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/8",
+      "dst": "ELSB - Sales - FCU",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/9",
+      "dst": "ELSB - Sales - Acc",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/10",
+      "dst": "ELSB - Turing- Tecteo",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/11",
+      "dst": "ELSB - Turing- Sensor",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/12",
+      "dst": "ELSB - Turing- FCU",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/13",
+      "dst": "ELSB - PB121- Tecteo",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/14",
+      "dst": "ELSB - PB121- FCU",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/15",
+      "dst": "ELSB - PB121- Sensor",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/16",
+      "dst": "ELSB - PB123- Tecteo",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/17",
+      "dst": "ELSB - PB123 - Sensor",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/18",
+      "dst": "Bell - Tecteo",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/19",
+      "dst": "Bell - Sensor",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/20",
+      "dst": "Bell - FCU",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/21",
+      "dst": "Weizman - Tecteo",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/22",
+      "dst": "Weizman - Sensor",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/23",
+      "dst": "Weizman - FCU",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/24",
+      "dst": "BrownBoveri - Tecteo",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/25",
+      "dst": "BrownBoveri - Sensor",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/26",
+      "dst": "BrownBoveri - FCU",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/27",
+      "dst": "ELService - Tecteo",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/28",
+      "dst": "ELService - Sensor",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/29",
+      "dst": "ELService - FCU",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/30",
+      "dst": "ELServiceLab - Tecteo",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/31",
+      "dst": "ELServiceLab - Sensor",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/32",
+      "dst": "OpenSpace Ofir - Tecteo",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/33",
+      "dst": "OpenSpace Ofir - Sensor",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/34",
+      "dst": "OpenSpace Ofir- FCU",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/35",
+      "dst": "OpenSpace RTU - Tecteo",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/36",
+      "dst": "OpenSpace RTU - Sensor",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/37",
+      "dst": "OpenSpace RTU- FCU",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/38",
+      "dst": "OpenSpace Charging - Tecteo",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/39",
+      "dst": "OpenSpace Charging - Sensor",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/40",
+      "dst": "OpenSpace Charging- FCU",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/41",
+      "dst": "OpenSpace Maya - Tecteo",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/42",
+      "dst": "OpenSpace Maya - Sensor",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/43",
+      "dst": "OpenSpace Maya- FCU",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/44",
+      "dst": "OpenSpace Protection - Tecteo",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/45",
+      "dst": "OpenSpace Protection - Sensor",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/46",
+      "dst": "OpenSpace Protection- FCU",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/47",
+      "dst": "PB-Denis - Tecteo",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/48",
+      "dst": "PB-Denis - Sensor",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/49",
+      "dst": "PB-Denis - FCU",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/50",
+      "dst": "MarieCurie - Tecteo",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/51",
+      "dst": "MarieCurie - Sensor",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/52",
+      "dst": "MarieCurie - FCU",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/53",
+      "dst": "LV_Front - Tecteo",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/54",
+      "dst": "LV_Front- Sensor",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/55",
+      "dst": "LV_Front - FCU",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/56",
+      "dst": "LV_LeftSide - Tecteo",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/57",
+      "dst": "LV_LeftSide - FCU",
+      "status": 99
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/58",
+      "dst": "LV_RightSide - Tecteo",
+      "status": 1
+    },
+    {
+      "ip": "192.168.1.102",
+      "ga": "28/1/59",
+      "dst": "LV_RightSide - FCU",
+      "status": 1
+    }
+  ]
+}

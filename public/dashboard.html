@@ -42,9 +42,14 @@
     </main>
 
     <script>
-      async function load() {
-        const res = await fetch('/api/config');
-        const cfg = await res.json();
+      let lastStatus = null;
+
+      async function loadConfigAndStatus() {
+        const [cfgRes, statusRes] = await Promise.all([fetch('/api/config'), fetch('/api/status')]);
+        const cfg = await cfgRes.json();
+        const status = await statusRes.json();
+        lastStatus = status;
+
         const content = document.getElementById('content');
 
         if (!cfg || !Array.isArray(cfg.gateways) || !cfg.gateways.length) {
@@ -52,23 +57,40 @@
           return;
         }
 
+        // build a map of statuses for quick lookup
+        const statusMap = new Map();
+        for (const p of (status.points||[])) {
+          statusMap.set(`${p.ip}__${p.ga}`, p.status);
+        }
+
         let html = '';
         for (const gw of cfg.gateways) {
           html += `<h3 style="margin-top:0">Gateway ${gw.IPRS}</h3>`;
           html += `<table><thead><tr><th>GA</th><th>Name</th><th>Status</th></tr></thead><tbody>`;
           for (const p of gw.points) {
-            html += `<tr><td>${p.ga}</td><td>${p.dst||''}</td><td><span class="status-err">Not checked</span></td></tr>`;
+            const key = `${gw.IPRS}__${p.ga}`;
+            const s = statusMap.has(key) ? statusMap.get(key) : null;
+            let cls = 'status-err';
+            let text = 'Unknown';
+            if (s === 1) { cls = 'status-ok'; text = 'OK'; }
+            else if (s === -1) { cls = 'status-err'; text = 'Error'; }
+            else if (s === 99) { cls = 'status-err'; text = 'Timeout'; }
+
+            html += `<tr><td>${p.ga}</td><td>${p.dst||''}</td><td><span class="${cls}">${text}</span></td></tr>`;
           }
           html += `</tbody></table><div style="height:18px"></div>`;
         }
 
+        html += `<div style="font-size:12px;color:#9ca3af">Last update: ${status.updated || 'n/a'}</div>`;
+
         content.innerHTML = html;
       }
 
-      document.getElementById('reloadBtn').addEventListener('click', load);
+      document.getElementById('reloadBtn').addEventListener('click', loadConfigAndStatus);
       document.getElementById('backBtn').addEventListener('click', () => { window.location.href = '/index.html'; });
 
-      load();
+      loadConfigAndStatus();
+      setInterval(loadConfigAndStatus, 5000);
     </script>
   </body>
 </html>
