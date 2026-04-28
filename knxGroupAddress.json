@@ -1,247 +1,247 @@
 {
     "gateways": [
         {
-            "IPRS": "192.168.1.102",
+            "IPRS": "192.168.1.125",
             "points": [
                 {
                     "ga": "28/1/0",
-                    "dst": "Floor_1_Control_Tech_Tecteo"
+                    "dst": "ELSB - Tech - Tecteo"
                 },
                 {
                     "ga": "28/1/1",
-                    "dst": "Floor_1_Control_Tech_Sensor"
+                    "dst": "ELSB - Tech - Sensor"
                 },
                 {
                     "ga": "28/1/2",
-                    "dst": "Floor_1_Control_Tech_FCU"
+                    "dst": "ELSB - Tech - FCU"
                 },
                 {
                     "ga": "28/1/3",
-                    "dst": "Floor_1_Control_Tech_Acc"
+                    "dst": "ELSB - Tech - Acc"
                 },
                 {
                     "ga": "28/1/4",
-                    "dst": "Floor_1_Control_Front_Tecteo"
+                    "dst": "ELSB - Front - Tecteo"
                 },
                 {
                     "ga": "28/1/5",
-                    "dst": "Floor_1_Control_Front_FCU"
+                    "dst": "ELSB - Front - FCU"
                 },
                 {
                     "ga": "28/1/6",
-                    "dst": "Floor_1_Control_Sales_Tecteo"
+                    "dst": "ELSB - Sales - Tecteo"
                 },
                 {
                     "ga": "28/1/7",
-                    "dst": "Floor_1_Control_Sales_Sensor"
+                    "dst": "ELSB - Sales - Sensor"
                 },
                 {
                     "ga": "28/1/8",
-                    "dst": "Floor_1_Control_Sales_FCU"
+                    "dst": "ELSB - Sales - FCU"
                 },
                 {
                     "ga": "28/1/9",
-                    "dst": "Floor_1_Control_Sales_Acc"
+                    "dst": "ELSB - Sales - Acc"
                 },
                 {
                     "ga": "28/1/10",
-                    "dst": "Floor_1_Control_Turing_Tecteo"
+                    "dst": "ELSB - Turing- Tecteo"
                 },
                 {
                     "ga": "28/1/11",
-                    "dst": "Floor_1_Control_Turing_Sensor"
+                    "dst": "ELSB - Turing- Sensor"
                 },
                 {
                     "ga": "28/1/12",
-                    "dst": "Floor_1_Control_Turing_FCU"
+                    "dst": "ELSB - Turing- FCU"
                 },
                 {
                     "ga": "28/1/13",
-                    "dst": "Floor_1_PB121_Tecteo"
+                    "dst": "ELSB - PB121- Tecteo"
                 },
                 {
                     "ga": "28/1/14",
-                    "dst": "Floor_1_PB121_FCU"
+                    "dst": "ELSB - PB121- FCU"
                 },
                 {
                     "ga": "28/1/15",
-                    "dst": "Floor_1_PB121_Sensor"
+                    "dst": "ELSB - PB121- Sensor"
                 },
                 {
                     "ga": "28/1/16",
-                    "dst": "Floor_1_PB123_Tecteo"
+                    "dst": "ELSB - PB123- Tecteo"
                 },
                 {
                     "ga": "28/1/17",
-                    "dst": "Floor_1_PB123_Sensor"
+                    "dst": "ELSB - PB123 - Sensor"
                 },
                 {
                     "ga": "28/1/18",
-                    "dst": "Floor_1_Bell_Tecteo"
+                    "dst": "Bell - Tecteo"
                 },
                 {
                     "ga": "28/1/19",
-                    "dst": "Floor_1_Bell_Sensor"
+                    "dst": "Bell - Sensor"
                 },
                 {
                     "ga": "28/1/20",
-                    "dst": "Floor_1_Bell_FCU"
+                    "dst": "Bell - FCU"
                 },
                 {
                     "ga": "28/1/21",
-                    "dst": "Floor_1_Weizman_Tecteo"
+                    "dst": "Weizman - Tecteo"
                 },
                 {
                     "ga": "28/1/22",
-                    "dst": "Floor_1_Weizman_Sensor"
+                    "dst": "Weizman - Sensor"
                 },
                 {
                     "ga": "28/1/23",
-                    "dst": "Floor_1_Weizman_FCU"
+                    "dst": "Weizman - FCU"
                 },
                 {
                     "ga": "28/1/24",
-                    "dst": "Floor_1_Brown_Boveri_Tecteo"
+                    "dst": "BrownBoveri - Tecteo"
                 },
                 {
                     "ga": "28/1/25",
-                    "dst": "Floor_1_Brown_Boveri_Sensor"
+                    "dst": "BrownBoveri - Sensor"
                 },
                 {
                     "ga": "28/1/26",
-                    "dst": "Floor_1_Brown_Boveri_FCU"
+                    "dst": "BrownBoveri - FCU"
                 },
                 {
                     "ga": "28/1/27",
-                    "dst": "Floor_1_EL_Service_Tecteo"
+                    "dst": "ELService - Tecteo"
                 },
                 {
                     "ga": "28/1/28",
-                    "dst": "Floor_1_EL_Service_Sensor"
+                    "dst": "ELService - Sensor"
                 },
                 {
                     "ga": "28/1/29",
-                    "dst": "Floor_1_EL_Service_FCU"
+                    "dst": "ELService - FCU"
                 },
                 {
                     "ga": "28/1/30",
-                    "dst": "Floor_1_EL_Service_Lab_Tecteo"
+                    "dst": "ELServiceLab - Tecteo"
                 },
                 {
                     "ga": "28/1/31",
-                    "dst": "Floor_1_EL_Service_Lab_Sensor"
+                    "dst": "ELServiceLab - Sensor"
                 },
                 {
                     "ga": "28/1/32",
-                    "dst": "Floor_1_OP_Ofir_Tecteo"
+                    "dst": "OpenSpace Ofir - Tecteo"
                 },
                 {
                     "ga": "28/1/33",
-                    "dst": "Floor_1_OP_Ofir_Sensor"
+                    "dst": "OpenSpace Ofir - Sensor"
                 },
                 {
                     "ga": "28/1/34",
-                    "dst": "Floor_1_OP_Ofir_FCU"
+                    "dst": "OpenSpace Ofir- FCU"
                 },
                 {
                     "ga": "28/1/35",
-                    "dst": "Floor_1_OP_RTU_Tecteo"
+                    "dst": "OpenSpace RTU - Tecteo"
                 },
                 {
                     "ga": "28/1/36",
-                    "dst": "Floor_1_OP_RTU_Sensor"
+                    "dst": "OpenSpace RTU - Sensor"
                 },
                 {
                     "ga": "28/1/37",
-                    "dst": "Floor_1_OP_RTU_FCU"
+                    "dst": "OpenSpace RTU- FCU"
                 },
                 {
                     "ga": "28/1/38",
-                    "dst": "Floor_1_OP_Charges_Tecteo"
+                    "dst": "OpenSpace Charging - Tecteo"
                 },
                 {
                     "ga": "28/1/39",
-                    "dst": "Floor_1_OP_Charges_Sensor"
+                    "dst": "OpenSpace Charging - Sensor"
                 },
                 {
                     "ga": "28/1/40",
-                    "dst": "Floor_1_OP_Charges_FCU"
+                    "dst": "OpenSpace Charging- FCU"
                 },
                 {
                     "ga": "28/1/41",
-                    "dst": "Floor_1_OP_Maya_Tecteo"
+                    "dst": "OpenSpace Maya - Tecteo"
                 },
                 {
                     "ga": "28/1/42",
-                    "dst": "Floor_1_OP_Maya_Sensor"
+                    "dst": "OpenSpace Maya - Sensor"
                 },
                 {
                     "ga": "28/1/43",
-                    "dst": "Floor_1_OP_Maya_FCU"
+                    "dst": "OpenSpace Maya- FCU"
                 },
                 {
                     "ga": "28/1/44",
-                    "dst": "Floor_1_OP_Protection_Tecteo"
+                    "dst": "OpenSpace Protection - Tecteo"
                 },
                 {
                     "ga": "28/1/45",
-                    "dst": "Floor_1_OP_Protection_Sensor"
+                    "dst": "OpenSpace Protection - Sensor"
                 },
                 {
                     "ga": "28/1/46",
-                    "dst": "Floor_1_OP_Protection_FCU"
+                    "dst": "OpenSpace Protection- FCU"
                 },
                 {
                     "ga": "28/1/47",
-                    "dst": "Floor_1_PB_Dennis_Tecteo"
+                    "dst": "PB-Denis - Tecteo"
                 },
                 {
                     "ga": "28/1/48",
-                    "dst": "Floor_1_PB_Dennis_Sensor"
+                    "dst": "PB-Denis - Sensor"
                 },
                 {
                     "ga": "28/1/49",
-                    "dst": "Floor_1_PB_Dennis_FCU"
+                    "dst": "PB-Denis - FCU"
                 },
                 {
                     "ga": "28/1/50",
-                    "dst": "Floor_1_Marie_Curie_Tecteo"
+                    "dst": "MarieCurie - Tecteo"
                 },
                 {
                     "ga": "28/1/51",
-                    "dst": "Floor_1_Marie_Curie_Sensor"
+                    "dst": "MarieCurie - Sensor"
                 },
                 {
                     "ga": "28/1/52",
-                    "dst": "Floor_1_Marie_Curie_FCU"
+                    "dst": "MarieCurie - FCU"
                 },
-                 {
+                {
                     "ga": "28/1/53",
-                    "dst": "Floor_1_LV_Front_Tecteo"
+                    "dst": "LV_Front - Tecteo"
                 },
                 {
                     "ga": "28/1/54",
-                    "dst": "Floor_1_LV_Front_Sensor"
+                    "dst": "LV_Front- Sensor"
                 },
                 {
                     "ga": "28/1/55",
-                    "dst": "Floor_1_LV_Front_FCU"
+                    "dst": "LV_Front - FCU"
                 },
                 {
                     "ga": "28/1/56",
-                    "dst": "Floor_1_LV_Left_Tecteo"
+                    "dst": "LV_LeftSide - Tecteo"
                 },
                 {
                     "ga": "28/1/57",
-                    "dst": "Floor_1_LV_Left_Sensor"
+                    "dst": "LV_LeftSide - FCU"
                 },
                 {
                     "ga": "28/1/58",
-                    "dst": "Floor_1_LV_Right_Tecteo"
+                    "dst": "LV_RightSide - Tecteo"
                 },
                 {
                     "ga": "28/1/59",
-                    "dst": "Floor_1_LV_Right_Sensor"
+                    "dst": "LV_RightSide - FCU"
                 }
             ]
         }

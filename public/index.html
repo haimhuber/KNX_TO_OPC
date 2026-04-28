@@ -1,0 +1,825 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ABB KNX Gateway JSON Builder</title>
+
+  <style>
+    :root {
+      --abb-red: #ff000f;
+      --abb-red-dark: #c9000c;
+      --abb-dark: #111111;
+      --abb-gray: #6b7280;
+      --abb-light-gray: #f4f6f8;
+      --abb-border: #e5e7eb;
+      --abb-white: #ffffff;
+      --success: #0f766e;
+      --danger: #dc2626;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+
+  background:
+    radial-gradient(circle at top right, rgba(255, 0, 15, 0.08), transparent 30%),
+    linear-gradient(180deg, #1c2430 0%, #0f1720 100%);
+
+  color: #e5e7eb;
+  direction: ltr;
+}
+    .app-header {
+      background: linear-gradient(135deg, #111111 0%, #2a2a2a 70%, #ff000f 100%);
+      color: white;
+      padding: 28px 36px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+    }
+
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .brand-label {
+      font-size: 13px;
+      letter-spacing: 2px;
+      font-weight: bold;
+      color: #ffffff;
+      opacity: 0.85;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 30px;
+      font-weight: 800;
+    }
+
+    .subtitle {
+      margin-top: 8px;
+      color: #e5e7eb;
+      font-size: 15px;
+    }
+
+    .abb-badge {
+      background: var(--abb-red);
+      color: white;
+      padding: 10px 18px;
+      border-radius: 999px;
+      font-weight: bold;
+      box-shadow: 0 12px 24px rgba(255, 0, 15, 0.35);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 28px auto;
+      padding: 0 20px 40px;
+    }
+
+    .section-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background: var(--abb-white);
+      border-radius: 18px;
+      padding: 22px;
+      box-shadow: 0 18px 45px rgba(17, 17, 17, 0.08);
+      border: 1px solid var(--abb-border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 5px;
+      background: linear-gradient(90deg, var(--abb-red), var(--abb-red-dark));
+    }
+
+    .section-title {
+      margin: 0 0 8px;
+      font-size: 19px;
+      font-weight: 800;
+      color: var(--abb-dark);
+    }
+
+    .section-description {
+      margin: 0 0 18px;
+      color: var(--abb-gray);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    label {
+      font-size: 13px;
+      color: var(--abb-gray);
+      font-weight: bold;
+    }
+
+    input[type="text"],
+    input[type="file"] {
+      padding: 11px 12px;
+      border: 1px solid var(--abb-border);
+      border-radius: 10px;
+      min-width: 220px;
+      background: #ffffff;
+      outline: none;
+      transition: 0.2s;
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--abb-red);
+      box-shadow: 0 0 0 4px rgba(255, 0, 15, 0.08);
+    }
+
+    button {
+      background: var(--abb-red);
+      color: white;
+      border: none;
+      padding: 11px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: 0.2s;
+      box-shadow: 0 10px 22px rgba(255, 0, 15, 0.22);
+    }
+
+    button:hover {
+      background: var(--abb-red-dark);
+      transform: translateY(-1px);
+    }
+
+    button.ghost {
+      background: white;
+      color: var(--abb-red);
+      border: 1px solid rgba(255, 0, 15, 0.35);
+      box-shadow: none;
+    }
+
+    button.ghost:hover {
+      background: #fff1f2;
+    }
+
+    .gateway-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .gateway {
+      border: 1px solid rgba(255, 0, 15, 0.14);
+      border-radius: 16px;
+      padding: 16px;
+      background: linear-gradient(180deg, #fff7f7, #ffffff);
+      box-shadow: 0 12px 28px rgba(255, 0, 15, 0.06);
+    }
+
+    .gateway-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .gateway-title {
+      color: var(--abb-red);
+      font-weight: 900;
+      font-size: 15px;
+      letter-spacing: 0.5px;
+    }
+
+    .small {
+      width: 170px;
+    }
+
+    .points {
+      max-height: 270px;
+      overflow: auto;
+      border-radius: 12px;
+      padding: 12px;
+      background: #000000;
+      border: 1px solid var(--abb-border);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .point-row {
+      padding: 6px 0;
+      border-bottom: 1px solid #070707;
+    }
+
+    .point-row:last-child {
+      border-bottom: none;
+    }
+
+    .ipError {
+      color: var(--danger);
+      font-size: 13px;
+      margin-top: 8px;
+      font-weight: bold;
+    }
+
+    .error {
+      border-color: var(--danger) !important;
+      box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.08) !important;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .stat-box {
+      background: #111111;
+      color: white;
+      border-radius: 14px;
+      padding: 16px;
+      min-height: 105px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-box::after {
+      content: "";
+      position: absolute;
+      width: 70px;
+      height: 70px;
+      right: -22px;
+      bottom: -22px;
+      background: var(--abb-red);
+      border-radius: 50%;
+      opacity: 0.9;
+    }
+
+    .stat-number {
+      font-size: 32px;
+      font-weight: 900;
+      margin-bottom: 6px;
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: #d1d5db;
+    }
+
+    .json-output {
+      width: 100%;
+      min-height: 280px;
+      border-radius: 14px;
+      padding: 16px;
+      border: 1px solid var(--abb-border);
+      background: #111111;
+      color: #f9fafb;
+      font-family: Consolas, monospace;
+      resize: vertical;
+      outline: none;
+    }
+
+    .empty-state {
+      color: var(--abb-gray);
+      font-style: italic;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #f3f4f6;
+      color: var(--abb-gray);
+      padding: 7px 11px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--abb-red);
+      border-radius: 50%;
+    }
+
+    @media (max-width: 900px) {
+      .section-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .header-content {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="app-header">
+    <div class="header-content">
+      <div class="brand">
+        <div class="brand-label">ABB STYLE TOOL</div>
+        <h1>KNX Gateway JSON Builder</h1>
+        <div class="subtitle">Import ETS files, map KNX group addresses, and generate a structured JSON configuration.</div>
+      </div>
+      <div class="abb-badge">ABB</div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="section-grid">
+      <section class="card">
+        <h2 class="section-title">Gateway Configuration</h2>
+        <p class="section-description">
+          Add one or more KNX/IP gateways, upload ETS exports, and validate gateway IP addresses before generating JSON.
+        </p>
+
+        <div class="row" style="margin-bottom: 18px;">
+          <button id="addGatewayBtn" class="ghost">+ Add Gateway</button>
+          <span class="status-pill">
+            <span class="status-dot"></span>
+            Ready for ETS import
+          </span>
+        </div>
+
+        <div id="gatewayList" class="gateway-list"></div>
+      </section>
+
+      <aside class="card">
+        <h2 class="section-title">Project Summary</h2>
+        <p class="section-description">Live overview of imported gateways and KNX points.</p>
+
+        <div class="stats">
+          <div class="stat-box">
+            <div id="gatewayCount" class="stat-number">0</div>
+            <div class="stat-label">Gateways</div>
+          </div>
+
+          <div class="stat-box">
+            <div id="pointCount" class="stat-number">0</div>
+            <div class="stat-label">KNX Points</div>
+          </div>
+
+          <div class="stat-box">
+            <div id="validIpCount" class="stat-number">0</div>
+            <div class="stat-label">Valid IPs</div>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <section class="card">
+      <h2 class="section-title">Combined Preview</h2>
+      <p class="section-description">
+        All imported group addresses from all gateways will appear here before exporting.
+      </p>
+
+      <div id="combinedPreview" class="points empty-state">No data available</div>
+
+      <div class="actions">
+        <button id="buildBtn">Build JSON</button>
+        <button id="copyAllBtn" class="ghost">Copy JSON</button>
+        <button id="downloadAllBtn" class="ghost">Download JSON</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 class="section-title">Generated JSON Output</h2>
+      <p class="section-description">
+        This JSON can be copied or downloaded and used as your KNX gateway configuration file.
+      </p>
+
+      <textarea id="output" class="json-output" readonly placeholder="Generated JSON will appear here..."></textarea>
+    </section>
+  </main>
+
+  <script>
+    function parseEtsXml(text) {
+      try {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(text, "application/xml");
+        const gaNodes = Array.from(doc.getElementsByTagName("GroupAddress"));
+
+        if (!gaNodes.length) return null;
+
+        return gaNodes.map(node => ({
+          ga: (node.getAttribute("Address") || "").replace(/[.,]/g, "/"),
+          dst: (node.getAttribute("Name") || "").trim()
+        }));
+      } catch (err) {
+        return null;
+      }
+    }
+
+    function parseTextHeuristic(text) {
+      const lines = text
+        .split(/\r?\n/)
+        .map(line => line.trim())
+        .filter(Boolean);
+
+      const points = [];
+
+      for (const line of lines) {
+        const xmlMatch = line.match(/Address=\"(\d+[\./]\d+[\./]\d+)\"(?:.*Name=\"([^\"]+)\")?/);
+
+        if (xmlMatch) {
+          points.push({
+            ga: xmlMatch[1].replace(/[.,]/g, "/"),
+            dst: (xmlMatch[2] || "").trim()
+          });
+          continue;
+        }
+
+        const parts = line.split(/[,;\t]+/).map(part => part.trim());
+
+        let ga = null;
+        let dst = null;
+
+        for (const part of parts) {
+          if (/^\d+[\./]\d+[\./]\d+$/.test(part)) {
+            ga = part.replace(/[.,]/g, "/");
+            break;
+          }
+        }
+
+        if (!ga) {
+          const match = line.match(/(\d+[\./]\d+[\./]\d+)\s+(.+)/);
+          if (match) {
+            ga = match[1].replace(/[.,]/g, "/");
+            dst = match[2].trim();
+          }
+        }
+
+        if (!dst && parts.length >= 2) {
+          dst = parts.slice(1).join(" - ");
+        }
+
+        if (ga) {
+          points.push({
+            ga,
+            dst: dst || ""
+          });
+        }
+      }
+
+      return points;
+    }
+
+    const gateways = [];
+
+    const gatewayListEl = document.getElementById("gatewayList");
+    const combinedPreview = document.getElementById("combinedPreview");
+    const outputEl = document.getElementById("output");
+
+    const gatewayCountEl = document.getElementById("gatewayCount");
+    const pointCountEl = document.getElementById("pointCount");
+    const validIpCountEl = document.getElementById("validIpCount");
+
+    function isValidIP(ip) {
+      if (!ip) return false;
+
+      const regex = /^(25[0-5]|2[0-4]\d|1?\d?\d)(\.(25[0-5]|2[0-4]\d|1?\d?\d)){3}$/;
+      return regex.test(ip);
+    }
+
+    function showIpError(container, message) {
+      const ipInput = container.querySelector(".ip");
+      ipInput.classList.add("error");
+
+      let error = container.querySelector(".ipError");
+
+      if (!error) {
+        error = document.createElement("div");
+        error.className = "ipError";
+        container.appendChild(error);
+      }
+
+      error.innerText = message;
+    }
+
+    function clearIpError(container) {
+      const ipInput = container.querySelector(".ip");
+      ipInput.classList.remove("error");
+
+      const error = container.querySelector(".ipError");
+
+      if (error) {
+        error.remove();
+      }
+    }
+
+    function updateStats() {
+      const totalGateways = gateways.length;
+      const totalPoints = gateways.reduce((sum, gateway) => sum + gateway.points.length, 0);
+      const validIps = gateways.filter(gateway => isValidIP(gateway.ip)).length;
+
+      gatewayCountEl.innerText = totalGateways;
+      pointCountEl.innerText = totalPoints;
+      validIpCountEl.innerText = validIps;
+    }
+
+    function renderGateways() {
+      gatewayListEl.innerHTML = "";
+
+      gateways.forEach((gateway, index) => {
+        const gatewayEl = document.createElement("div");
+        gatewayEl.className = "gateway";
+        gatewayEl.dataset.id = gateway.id;
+
+        gatewayEl.innerHTML = `
+          <div class="gateway-header">
+            <div>
+              <div class="gateway-title">Gateway ${index + 1}</div>
+              <div style="color: var(--abb-gray); font-size: 13px; margin-top: 4px;">
+                Configure IPRS IP address and import ETS file
+              </div>
+            </div>
+
+            <button class="removeBtn ghost">Remove</button>
+          </div>
+
+          <div class="row" style="margin-top: 16px;">
+            <div>
+              <label>IPRS IP Address</label><br />
+              <input type="text" class="ip small" value="${gateway.ip || ""}" placeholder="192.168.1.102" />
+            </div>
+
+            <div>
+              <label>ETS Export File</label><br />
+              <input type="file" class="file" accept=".xml,.csv,.txt" />
+            </div>
+
+            <div style="align-self: end;">
+              <button class="importBtn">Import ETS</button>
+            </div>
+          </div>
+
+          <div style="margin-top: 14px;">
+            <div style="font-size: 13px; color: var(--abb-gray); margin-bottom: 8px; font-weight: bold;">
+              Imported Points: ${gateway.points.length}
+            </div>
+
+            <div class="points">
+              ${
+                gateway.points.length
+                  ? gateway.points.map(point => `
+                    <div class="point-row">
+                      <strong>${point.ga}</strong> — ${point.dst || "Unnamed point"}
+                    </div>
+                  `).join("")
+                  : `<span class="empty-state">No points imported yet</span>`
+              }
+            </div>
+          </div>
+        `;
+
+        const ipInput = gatewayEl.querySelector(".ip");
+
+        ipInput.addEventListener("input", event => {
+          gateway.ip = event.target.value.trim();
+          clearIpError(gatewayEl);
+          updateStats();
+        });
+
+        const fileInput = gatewayEl.querySelector(".file");
+        const importBtn = gatewayEl.querySelector(".importBtn");
+
+        importBtn.addEventListener("click", async () => {
+          if (!gateway.ip) {
+            showIpError(gatewayEl, "IP address is required before importing.");
+            return;
+          }
+
+          if (!isValidIP(gateway.ip)) {
+            showIpError(gatewayEl, "Invalid IP address.");
+            return;
+          }
+
+          if (!fileInput.files.length) {
+            alert("Please select an ETS export file.");
+            return;
+          }
+
+          const file = fileInput.files[0];
+          const text = await file.text();
+
+          let points = parseEtsXml(text);
+
+          if (!points || !points.length) {
+            points = parseTextHeuristic(text);
+          }
+
+          if (!points || !points.length) {
+            alert("No KNX group addresses were found in this file.");
+            return;
+          }
+
+          gateway.points = points;
+
+          renderGateways();
+          renderCombinedPreview();
+          updateStats();
+        });
+
+        const removeBtn = gatewayEl.querySelector(".removeBtn");
+
+        removeBtn.addEventListener("click", () => {
+          const indexToRemove = gateways.findIndex(item => item.id === gateway.id);
+
+          if (indexToRemove >= 0) {
+            gateways.splice(indexToRemove, 1);
+            renderGateways();
+            renderCombinedPreview();
+            updateStats();
+            buildJson(false);
+          }
+        });
+
+        gatewayListEl.appendChild(gatewayEl);
+      });
+
+      updateStats();
+    }
+
+    function renderCombinedPreview() {
+      const allPoints = [];
+
+      gateways.forEach(gateway => {
+        gateway.points.forEach(point => {
+          allPoints.push({
+            ip: gateway.ip || "0.0.0.0",
+            ga: point.ga,
+            dst: point.dst
+          });
+        });
+      });
+
+      if (!allPoints.length) {
+        combinedPreview.classList.add("empty-state");
+        combinedPreview.innerText = "No data available";
+        return;
+      }
+
+      combinedPreview.classList.remove("empty-state");
+
+      combinedPreview.innerHTML = allPoints.map(point => `
+        <div class="point-row">
+          <strong>${point.ip}</strong>
+          <span style="color: var(--abb-red); font-weight: bold;"> | </span>
+          ${point.ga}
+          —
+          ${point.dst || "Unnamed point"}
+        </div>
+      `).join("");
+    }
+
+    function validateAllGateways() {
+      let isValid = true;
+
+      document.querySelectorAll(".gateway").forEach(element => clearIpError(element));
+
+      gateways.forEach(gateway => {
+        const gatewayEl = document.querySelector(`.gateway[data-id="${gateway.id}"]`);
+
+        if (!gateway.ip) {
+          showIpError(gatewayEl, "IP address is required.");
+          isValid = false;
+        } else if (!isValidIP(gateway.ip)) {
+          showIpError(gatewayEl, "Invalid IP address.");
+          isValid = false;
+        }
+      });
+
+      return isValid;
+    }
+
+    function buildJson(showAlert = true) {
+      if (!gateways.length) {
+        if (showAlert) alert("Please add at least one gateway.");
+        return null;
+      }
+
+      if (!validateAllGateways()) {
+        if (showAlert) alert("Please fix invalid or missing IP addresses.");
+        return null;
+      }
+
+      const output = {
+        gateways: gateways.map(gateway => ({
+          IPRS: gateway.ip,
+          points: gateway.points
+        }))
+      };
+
+      const json = JSON.stringify(output, null, 4);
+      outputEl.value = json;
+
+      return json;
+    }
+
+    document.getElementById("addGatewayBtn").addEventListener("click", () => {
+      const id = Math.random().toString(36).slice(2, 9);
+
+      gateways.push({
+        id,
+        ip: "",
+        points: []
+      });
+
+      renderGateways();
+      renderCombinedPreview();
+      updateStats();
+    });
+
+    document.getElementById("buildBtn").addEventListener("click", () => {
+      buildJson(true);
+    });
+
+    document.getElementById("copyAllBtn").addEventListener("click", async () => {
+      const json = buildJson(false);
+
+      if (!json) return;
+
+      try {
+        await navigator.clipboard.writeText(json);
+        alert("JSON copied to clipboard.");
+      } catch (err) {
+        alert("Failed to copy JSON.");
+      }
+    });
+
+    document.getElementById("downloadAllBtn").addEventListener("click", async () => {
+      const json = buildJson(false);
+
+      if (!json) return;
+
+      // First, POST to server to save as knxGroupAddress.json in project folder
+      try {
+        const res = await fetch('/api/save', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: json
+        });
+
+        if (!res.ok) {
+          const err = await res.json().catch(()=>({ error: res.statusText }));
+          alert('Server save failed: ' + (err.error || res.statusText));
+          return;
+        }
+
+        // Optionally also trigger client download
+        const blob = new Blob([json], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url; link.download = 'knxGroupAddress.json'; document.body.appendChild(link); link.click(); link.remove(); URL.revokeObjectURL(url);
+
+        alert('Saved to project as knxGroupAddress.json');
+
+        // Redirect to root — server will detect file and serve dashboard
+        window.location.href = '/';
+      } catch (err) {
+        alert('Save failed: ' + err);
+      }
+    });
+
+    document.getElementById("addGatewayBtn").click();
+  </script>
+</body>
+</html>

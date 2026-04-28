@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>ABB KNX Dashboard</title>
+    <style>
+      :root{--abb-red:#ff000f;--abb-dark:#0b1720;--muted:#6b7280}
+      body{margin:0;font-family:Arial, Helvetica, sans-serif;background:linear-gradient(180deg,#0f1720,#071021);color:#e5e7eb}
+      .app-header{background:linear-gradient(135deg,#111,#2a2a2a);padding:20px 36px}
+      .header-content{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
+      h1{margin:0;color:var(--abb-red);font-size:24px}
+      .container{max-width:1200px;margin:28px auto;padding:0 20px}
+      .card{background:#ffffff;border-radius:12px;padding:18px;color:#0b1720}
+      table{width:100%;border-collapse:collapse}
+      th,td{padding:10px;border-bottom:1px solid #eef3f8;text-align:right}
+      th{background:#fff7f7}
+      .status-ok{color:green;font-weight:700}
+      .status-err{color:var(--abb-red);font-weight:700}
+      .actions{display:flex;gap:8px}
+      button{background:var(--abb-red);color:#fff;border:none;padding:8px 12px;border-radius:8px}
+    </style>
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="header-content">
+        <div>
+          <div style="font-size:13px;letter-spacing:2px;font-weight:700;color:#fff;opacity:0.9">ABB STYLE TOOL</div>
+          <h1>KNX Dashboard — Group Address Monitoring</h1>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center">
+          <button id="backBtn" class="ghost">Back</button>
+          <button id="reloadBtn">Reload</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="container">
+      <div id="content" class="card">
+        Loading configuration...
+      </div>
+    </main>
+
+    <script>
+      async function load() {
+        const res = await fetch('/api/config');
+        const cfg = await res.json();
+        const content = document.getElementById('content');
+
+        if (!cfg || !Array.isArray(cfg.gateways) || !cfg.gateways.length) {
+          content.innerHTML = '<div style="color:#6b7280">No config found</div>';
+          return;
+        }
+
+        let html = '';
+        for (const gw of cfg.gateways) {
+          html += `<h3 style="margin-top:0">Gateway ${gw.IPRS}</h3>`;
+          html += `<table><thead><tr><th>GA</th><th>Name</th><th>Status</th></tr></thead><tbody>`;
+          for (const p of gw.points) {
+            html += `<tr><td>${p.ga}</td><td>${p.dst||''}</td><td><span class="status-err">Not checked</span></td></tr>`;
+          }
+          html += `</tbody></table><div style="height:18px"></div>`;
+        }
+
+        content.innerHTML = html;
+      }
+
+      document.getElementById('reloadBtn').addEventListener('click', load);
+      document.getElementById('backBtn').addEventListener('click', () => { window.location.href = '/index.html'; });
+
+      load();
+    </script>
+  </body>
+</html>
