@@ -6,6 +6,7 @@ import {
     DataType,
     StatusCodes
 } from "node-opcua";
+import { writeFile } from 'fs/promises';
 
 function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -21,6 +22,7 @@ const OPC_UA_PORT = 4840;
 const runtimePoints = new Map();
 // key = ip
 const knxConnections = new Map();
+const STATUS_PATH = './knxStatus.json';
 
 async function loadConfig() {
     const data = await fs.readFile(CONFIG_PATH, "utf8");
@@ -358,6 +360,15 @@ async function start() {
             }
 
             console.log(`[MAIN] Polling cycle finished. Waiting ${CYCLE_DELAY_MS} ms...\n`);
+
+            // write status snapshot for dashboard
+            try {
+                const points = Array.from(runtimePoints.values()).map(p => ({ ip: p.ip, ga: p.ga, dst: p.dst, status: p.getStatusValue() }));
+                const payload = { updated: new Date().toISOString(), points };
+                await writeFile(STATUS_PATH, JSON.stringify(payload, null, 2), 'utf8');
+            } catch (err) {
+                console.error('Failed to write status file:', err);
+            }
         } catch (err) {
             console.error(`[MAIN] Error:`, err.message || err);
         }

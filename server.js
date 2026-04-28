@@ -8,6 +8,7 @@ const upload = multer({ storage: multer.memoryStorage() });
 const PORT = 3000;
 const CONFIG_DIR = 'C:/Users/User/Downloads/KNX_TO_OPC';
 const CONFIG_PATH = path.join(CONFIG_DIR, 'knxGroupAddress.json');
+const STATUS_PATH = path.join(CONFIG_DIR, 'knxStatus.json');
 
 app.use(express.json());
 // don't let express.static automatically serve index.html for '/'
@@ -139,6 +140,17 @@ app.post('/api/upload', upload.single('etsfile'), async (req, res) => {
 
 app.get('/api/config', async (req, res) => {
   res.json(await loadConfig());
+});
+
+// Return latest runtime statuses written by knxClient (if available)
+app.get('/api/status', async (req, res) => {
+  try {
+    const txt = await fs.readFile(STATUS_PATH, 'utf8');
+    return res.json(JSON.parse(txt));
+  } catch (err) {
+    // if file missing, return empty structure
+    return res.json({ updated: null, points: [] });
+  }
 });
 
 app.listen(PORT, () => {
