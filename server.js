@@ -2,11 +2,18 @@ import express from 'express';
 import fs from 'fs/promises';
 import path from 'path';
 import multer from 'multer';
+import os from 'os';
+import { fileURLToPath } from 'url';
 
 const app = express();
 const upload = multer({ storage: multer.memoryStorage() });
 
-const PORT = 3000;
+const PORT = 3001;
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const PUBLIC_DIR = path.join(__dirname, 'public');
 
 const CONFIG_DIR = 'C:/Users/User/Downloads/KNX_TO_OPC';
 const CONFIG_PATH = path.join(CONFIG_DIR, 'knxGroupAddress.json');
@@ -18,8 +25,37 @@ let latestStatus = {
   points: []
 };
 
+function getLocalIp() {
+  const nets = os.networkInterfaces();
+
+  for (const name of Object.keys(nets)) {
+    for (const net of nets[name]) {
+      if (net.family === 'IPv4' && !net.internal) {
+        return net.address;
+      }
+    }
+  }
+
+  return 'localhost';
+}
+
+function getLocalIps() {
+  const nets = os.networkInterfaces();
+  const addrs = [];
+
+  for (const name of Object.keys(nets)) {
+    for (const net of nets[name]) {
+      if (net.family === 'IPv4' && !net.internal) {
+        addrs.push({ iface: name, address: net.address });
+      }
+    }
+  }
+
+  return addrs;
+}
+
 app.use(express.json({ limit: '10mb' }));
-app.use(express.static('public', { index: false }));
+app.use(express.static(PUBLIC_DIR, { index: false }));
 
 function makePointKey(ip, ga) {
   return `${ip}__${ga}`;
@@ -33,11 +69,31 @@ function broadcast(eventName, payload) {
   for (const client of [...sseClients]) {
     try {
       client.write(message);
-    } catch (err) {
+    } catch {
       sseClients.delete(client);
     }
   }
 }
+
+// =========================
+// HTML routes
+// =========================
+app.get('/', async (req, res) => {
+  try {
+    await fs.access(CONFIG_PATH);
+    return res.sendFile(path.join(PUBLIC_DIR, 'dashboard.html'));
+  } catch {
+    return res.sendFile(path.join(PUBLIC_DIR, 'index.html'));
+  }
+});
+
+app.get('/index.html', (req, res) => {
+  res.sendFile(path.join(PUBLIC_DIR, 'index.html'));
+});
+
+app.get('/dashboard.html', (req, res) => {
+  res.sendFile(path.join(PUBLIC_DIR, 'dashboard.html'));
+});
 
 // =========================
 // SSE stream
@@ -60,8 +116,30 @@ app.get('/api/status/stream', (req, res) => {
 
   req.on('close', () => {
     sseClients.delete(res);
+    res.end();
   });
 });
+
+// =========================
+// Config helpers
+// =========================
+async function loadConfig() {
+  try {
+    const txt = await fs.readFile(CONFIG_PATH, 'utf8');
+    return JSON.parse(txt);
+  } catch {
+    return { gateways: [] };
+  }
+}
+
+async function saveConfig(cfg) {
+  await fs.mkdir(CONFIG_DIR, { recursive: true });
+
+  const tmp = CONFIG_PATH + '.tmp';
+
+  await fs.writeFile(tmp, JSON.stringify(cfg, null, 4), 'utf8');
+  await fs.rename(tmp, CONFIG_PATH);
+}
 
 // =========================
 // Save full KNX config
@@ -84,36 +162,6 @@ app.post('/api/save', async (req, res) => {
     return res.status(500).json({ error: String(err) });
   }
 });
-
-// =========================
-// Main route
-// =========================
-app.get('/', async (req, res) => {
-  try {
-    await fs.access(CONFIG_PATH);
-    return res.sendFile(path.resolve('public/dashboard.html'));
-  } catch {
-    return res.sendFile(path.resolve('public/index.html'));
-  }
-});
-
-async function loadConfig() {
-  try {
-    const txt = await fs.readFile(CONFIG_PATH, 'utf8');
-    return JSON.parse(txt);
-  } catch {
-    return { gateways: [] };
-  }
-}
-
-async function saveConfig(cfg) {
-  await fs.mkdir(CONFIG_DIR, { recursive: true });
-
-  const tmp = CONFIG_PATH + '.tmp';
-
-  await fs.writeFile(tmp, JSON.stringify(cfg, null, 4), 'utf8');
-  await fs.rename(tmp, CONFIG_PATH);
-}
 
 // =========================
 // ETS parser
@@ -218,6 +266,23 @@ app.get('/api/config', async (req, res) => {
 });
 
 // =========================
+// Debug
+// =========================
+app.get('/api/debug', (req, res) => {
+  try {
+    return res.json({
+      pid: process.pid,
+      cwd: process.cwd(),
+      publicDir: PUBLIC_DIR,
+      configPath: CONFIG_PATH,
+      interfaces: getLocalIps()
+    });
+  } catch (err) {
+    return res.status(500).json({ error: String(err) });
+  }
+});
+
+// =========================
 // Get latest online status
 // =========================
 app.get('/api/status', (req, res) => {
@@ -226,7 +291,6 @@ app.get('/api/status', (req, res) => {
 
 // =========================
 // Full status update
-// Optional snapshot update
 // =========================
 app.post('/api/status', (req, res) => {
   try {
@@ -259,7 +323,6 @@ app.post('/api/status', (req, res) => {
 
 // =========================
 // Single point update
-// Use this from KNX polling loop
 // =========================
 app.post('/api/status/point', (req, res) => {
   try {
@@ -293,6 +356,10 @@ app.post('/api/status/point', (req, res) => {
 
     latestStatus.updated = updatedPoint.updated;
 
+    console.log(
+      `[STATUS] ${updatedPoint.ip} | ${updatedPoint.ga} => ${updatedPoint.status}`
+    );
+
     broadcast('status-point', updatedPoint);
 
     return res.json({
@@ -307,8 +374,37 @@ app.post('/api/status/point', (req, res) => {
 });
 
 // =========================
+// Favicon - prevent browser 404 noise
+// =========================
+app.get('/favicon.ico', (req, res) => {
+  res.status(204).end();
+});
+
+// =========================
+// API 404 only
+// =========================
+app.use('/api', (req, res) => {
+  res.status(404).json({
+    error: 'API Not Found',
+    path: req.originalUrl
+  });
+});
+
+// =========================
+// HTML fallback
+// =========================
+app.use((req, res) => {
+  res.sendFile(path.join(PUBLIC_DIR, 'index.html'));
+});
+
+// =========================
 // Start server
 // =========================
-app.listen(PORT, () => {
-  console.log(`Config server listening on http://localhost:${PORT}`);
+const LOCAL_IP = getLocalIp();
+
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Config server listening on:`);
+  console.log(`→ Local:   http://localhost:${PORT}`);
+  console.log(`→ Network: http://${LOCAL_IP}:${PORT}`);
+  console.log(`→ Public folder: ${PUBLIC_DIR}`);
 });
