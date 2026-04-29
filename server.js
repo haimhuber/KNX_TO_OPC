@@ -406,5 +406,4 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log(`Config server listening on:`);
   console.log(`→ Local:   http://localhost:${PORT}`);
   console.log(`→ Network: http://${LOCAL_IP}:${PORT}`);
-  console.log(`→ Public folder: ${PUBLIC_DIR}`);
 });

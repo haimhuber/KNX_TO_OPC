@@ -19,7 +19,7 @@ const DELAY_BETWEEN_READS_MS = 300;
 const CYCLE_DELAY_MS = 5000;
 const OPC_UA_PORT = 4840;
 
-const API_POINT_STATUS_URL = "http://localhost:3000/api/status/point";
+const API_POINT_STATUS_URL = "http://localhost:3001/api/status/point";
 
 // key = `${ip}__${ga}`
 const runtimePoints = new Map();
