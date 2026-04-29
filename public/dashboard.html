@@ -1,96 +1,526 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>ABB KNX Dashboard</title>
-    <style>
-      :root{--abb-red:#ff000f;--abb-dark:#0b1720;--muted:#6b7280}
-      body{margin:0;font-family:Arial, Helvetica, sans-serif;background:linear-gradient(180deg,#0f1720,#071021);color:#e5e7eb}
-      .app-header{background:linear-gradient(135deg,#111,#2a2a2a);padding:20px 36px}
-      .header-content{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
-      h1{margin:0;color:var(--abb-red);font-size:24px}
-      .container{max-width:1200px;margin:28px auto;padding:0 20px}
-      .card{background:#ffffff;border-radius:12px;padding:18px;color:#0b1720}
-      table{width:100%;border-collapse:collapse}
-      th,td{padding:10px;border-bottom:1px solid #eef3f8;text-align:right}
-      th{background:#fff7f7}
-      .status-ok{color:green;font-weight:700}
-      .status-err{color:var(--abb-red);font-weight:700}
-      .actions{display:flex;gap:8px}
-      button{background:var(--abb-red);color:#fff;border:none;padding:8px 12px;border-radius:8px}
-    </style>
-  </head>
-  <body>
-    <header class="app-header">
-      <div class="header-content">
-        <div>
-          <div style="font-size:13px;letter-spacing:2px;font-weight:700;color:#fff;opacity:0.9">ABB STYLE TOOL</div>
-          <h1>KNX Dashboard — Group Address Monitoring</h1>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ABB KNX Dashboard</title>
+
+  <style>
+    :root {
+      --abb-red: #ff000f;
+      --abb-dark: #0b1720;
+      --muted: #6b7280;
+      --ok: #15803d;
+      --warning: #ca8a04;
+      --error: #dc2626;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, #0f1720, #071021);
+      color: #e5e7eb;
+    }
+
+    .app-header {
+      background: linear-gradient(135deg, #111, #2a2a2a);
+      padding: 20px 36px;
+    }
+
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    h1 {
+      margin: 0;
+      color: var(--abb-red);
+      font-size: 24px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 28px auto;
+      padding: 0 20px;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 18px;
+      color: #0b1720;
+      box-shadow: 0 18px 45px rgba(0,0,0,0.18);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 18px;
+    }
+
+    th,
+    td {
+      padding: 10px;
+      border-bottom: 1px solid #eef3f8;
+      text-align: left;
+    }
+
+    th {
+      background: #fff7f7;
+    }
+
+    button {
+      background: var(--abb-red);
+      color: #fff;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    button.ghost {
+      background: transparent;
+      border: 1px solid var(--abb-red);
+      color: #fff;
+    }
+
+    .status-ok {
+      color: var(--ok);
+      font-weight: 800;
+    }
+
+    .status-timeout {
+      color: var(--warning);
+      font-weight: 800;
+    }
+
+    .status-err {
+      color: var(--error);
+      font-weight: 800;
+    }
+
+    .status-unknown {
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .status-badge {
+      display: inline-block;
+      min-width: 145px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #f3f4f6;
+      text-align: center;
+    }
+
+    .summary {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .summary-box {
+      background: #111827;
+      color: #fff;
+      border-radius: 10px;
+      padding: 12px 16px;
+      min-width: 140px;
+    }
+
+    .summary-number {
+      font-size: 24px;
+      font-weight: 900;
+      color: var(--abb-red);
+    }
+
+    .summary-label {
+      font-size: 12px;
+      color: #d1d5db;
+    }
+
+    .last-update {
+      font-size: 12px;
+      color: #9ca3af;
+      margin-top: 12px;
+    }
+
+    .sse-indicator {
+      font-size: 13px;
+      color: #fff;
+      opacity: 0.9;
+    }
+
+    .sse-dot {
+      display: inline-block;
+      width: 9px;
+      height: 9px;
+      background: #6b7280;
+      border-radius: 50%;
+      margin-right: 6px;
+    }
+
+    .sse-dot.connected {
+      background: #22c55e;
+    }
+
+    .sse-dot.error {
+      background: var(--abb-red);
+    }
+  </style>
+</head>
+
+<body>
+  <header class="app-header">
+    <div class="header-content">
+      <div>
+        <div style="font-size:13px;letter-spacing:2px;font-weight:700;color:#fff;opacity:0.9">
+          ABB STYLE TOOL
         </div>
-        <div style="display:flex;gap:10px;align-items:center">
-          <button id="backBtn" class="ghost">Back</button>
-          <button id="reloadBtn">Reload</button>
+        <h1>KNX Dashboard — Group Address Monitoring</h1>
+        <div class="sse-indicator">
+          <span id="sseDot" class="sse-dot"></span>
+          <span id="sseText">Connecting...</span>
         </div>
       </div>
-    </header>
 
-    <main class="container">
-      <div id="content" class="card">
-        Loading configuration...
+      <div style="display:flex;gap:10px;align-items:center">
+        <button id="backBtn" class="ghost">Back</button>
+        <button id="reloadBtn">Reload Config</button>
       </div>
-    </main>
+    </div>
+  </header>
 
-    <script>
-      let lastStatus = null;
+  <main class="container">
+    <div id="content" class="card">
+      Loading configuration...
+    </div>
+  </main>
 
-      async function loadConfigAndStatus() {
-        const [cfgRes, statusRes] = await Promise.all([fetch('/api/config'), fetch('/api/status')]);
-        const cfg = await cfgRes.json();
-        const status = await statusRes.json();
-        lastStatus = status;
+  <script>
+    let currentConfig = null;
 
-        const content = document.getElementById('content');
+    let lastStatus = {
+      updated: null,
+      points: []
+    };
 
-        if (!cfg || !Array.isArray(cfg.gateways) || !cfg.gateways.length) {
-          content.innerHTML = '<div style="color:#6b7280">No config found</div>';
-          return;
-        }
+    function safeId(value) {
+      return String(value).replace(/[^a-zA-Z0-9_-]/g, '_');
+    }
 
-        // build a map of statuses for quick lookup
-        const statusMap = new Map();
-        for (const p of (status.points||[])) {
-          statusMap.set(`${p.ip}__${p.ga}`, p.status);
-        }
+    function getPointKey(ip, ga) {
+      return `${ip}__${ga}`;
+    }
 
-        let html = '';
-        for (const gw of cfg.gateways) {
-          html += `<h3 style="margin-top:0">Gateway ${gw.IPRS}</h3>`;
-          html += `<table><thead><tr><th>GA</th><th>Name</th><th>Status</th></tr></thead><tbody>`;
-          for (const p of gw.points) {
-            const key = `${gw.IPRS}__${p.ga}`;
-            const s = statusMap.has(key) ? statusMap.get(key) : null;
-            let cls = 'status-err';
-            let text = 'Unknown';
-            if (s === 1) { cls = 'status-ok'; text = 'OK'; }
-            else if (s === -1) { cls = 'status-err'; text = 'Error'; }
-            else if (s === 99) { cls = 'status-err'; text = 'Timeout'; }
+    function getStatusElementId(ip, ga) {
+      return `status-${safeId(ip)}-${safeId(ga)}`;
+    }
 
-            html += `<tr><td>${p.ga}</td><td>${p.dst||''}</td><td><span class="${cls}">${text}</span></td></tr>`;
-          }
-          html += `</tbody></table><div style="height:18px"></div>`;
-        }
+    function getRowElementId(ip, ga) {
+      return `row-${safeId(ip)}-${safeId(ga)}`;
+    }
 
-        html += `<div style="font-size:12px;color:#9ca3af">Last update: ${status.updated || 'n/a'}</div>`;
-
-        content.innerHTML = html;
+    function getStatusInfo(status) {
+      if (status === 1) {
+        return {
+          cls: 'status-ok',
+          text: 'OK'
+        };
       }
 
-      document.getElementById('reloadBtn').addEventListener('click', loadConfigAndStatus);
-      document.getElementById('backBtn').addEventListener('click', () => { window.location.href = '/index.html'; });
+      if (status === -1) {
+        return {
+          cls: 'status-err',
+          text: 'Communication Error'
+        };
+      }
 
-      loadConfigAndStatus();
-      setInterval(loadConfigAndStatus, 5000);
-    </script>
-  </body>
+      if (status === 99) {
+        return {
+          cls: 'status-timeout',
+          text: 'Timeout'
+        };
+      }
+
+      return {
+        cls: 'status-unknown',
+        text: 'Unknown'
+      };
+    }
+
+    async function loadInitialData() {
+      const [cfgRes, statusRes] = await Promise.all([
+        fetch('/api/config'),
+        fetch('/api/status')
+      ]);
+
+      currentConfig = await cfgRes.json();
+      lastStatus = await statusRes.json();
+
+      renderDashboard();
+    }
+
+    function buildStatusMap() {
+      const map = new Map();
+
+      for (const point of lastStatus.points || []) {
+        map.set(getPointKey(point.ip, point.ga), point);
+      }
+
+      return map;
+    }
+
+    function renderDashboard() {
+      const content = document.getElementById('content');
+
+      if (
+        !currentConfig ||
+        !Array.isArray(currentConfig.gateways) ||
+        !currentConfig.gateways.length
+      ) {
+        content.innerHTML = '<div style="color:#6b7280">No config found</div>';
+        return;
+      }
+
+      const statusMap = buildStatusMap();
+
+      let total = 0;
+      let ok = 0;
+      let timeout = 0;
+      let error = 0;
+      let unknown = 0;
+
+      for (const gateway of currentConfig.gateways) {
+        for (const point of gateway.points) {
+          total++;
+
+          const statusPoint = statusMap.get(getPointKey(gateway.IPRS, point.ga));
+          const status = statusPoint ? statusPoint.status : null;
+
+          if (status === 1) ok++;
+          else if (status === 99) timeout++;
+          else if (status === -1) error++;
+          else unknown++;
+        }
+      }
+
+      let html = `
+        <div class="summary">
+          <div class="summary-box">
+            <div id="sumTotal" class="summary-number">${total}</div>
+            <div class="summary-label">Total Points</div>
+          </div>
+
+          <div class="summary-box">
+            <div id="sumOk" class="summary-number">${ok}</div>
+            <div class="summary-label">OK</div>
+          </div>
+
+          <div class="summary-box">
+            <div id="sumTimeout" class="summary-number">${timeout}</div>
+            <div class="summary-label">Timeout</div>
+          </div>
+
+          <div class="summary-box">
+            <div id="sumError" class="summary-number">${error}</div>
+            <div class="summary-label">Communication Error</div>
+          </div>
+
+          <div class="summary-box">
+            <div id="sumUnknown" class="summary-number">${unknown}</div>
+            <div class="summary-label">Unknown</div>
+          </div>
+        </div>
+      `;
+
+      for (const gateway of currentConfig.gateways) {
+        html += `<h3 style="margin-top:0">Gateway ${gateway.IPRS}</h3>`;
+
+        html += `
+          <table>
+            <thead>
+              <tr>
+                <th>GA</th>
+                <th>Name</th>
+                <th>Status</th>
+                <th>Last Point Update</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
+
+        for (const point of gateway.points) {
+          const statusPoint = statusMap.get(getPointKey(gateway.IPRS, point.ga));
+          const statusValue = statusPoint ? statusPoint.status : null;
+          const info = getStatusInfo(statusValue);
+
+          html += `
+            <tr id="${getRowElementId(gateway.IPRS, point.ga)}">
+              <td>${point.ga}</td>
+              <td>${point.dst || ''}</td>
+              <td>
+                <span 
+                  id="${getStatusElementId(gateway.IPRS, point.ga)}"
+                  class="status-badge ${info.cls}"
+                  data-status="${statusValue ?? ''}"
+                >
+                  ${info.text}
+                </span>
+              </td>
+              <td id="updated-${safeId(gateway.IPRS)}-${safeId(point.ga)}">
+                ${statusPoint?.updated || ''}
+              </td>
+            </tr>
+          `;
+        }
+
+        html += `
+            </tbody>
+          </table>
+        `;
+      }
+
+      html += `
+        <div id="lastUpdate" class="last-update">
+          Last system update: ${lastStatus.updated || 'n/a'}
+        </div>
+      `;
+
+      content.innerHTML = html;
+    }
+
+    function updateSummaryCounters() {
+      if (!currentConfig) return;
+
+      let total = 0;
+      let ok = 0;
+      let timeout = 0;
+      let error = 0;
+      let unknown = 0;
+
+      const statusMap = buildStatusMap();
+
+      for (const gateway of currentConfig.gateways) {
+        for (const point of gateway.points) {
+          total++;
+
+          const statusPoint = statusMap.get(getPointKey(gateway.IPRS, point.ga));
+          const status = statusPoint ? statusPoint.status : null;
+
+          if (status === 1) ok++;
+          else if (status === 99) timeout++;
+          else if (status === -1) error++;
+          else unknown++;
+        }
+      }
+
+      const setText = (id, value) => {
+        const el = document.getElementById(id);
+        if (el) el.innerText = value;
+      };
+
+      setText('sumTotal', total);
+      setText('sumOk', ok);
+      setText('sumTimeout', timeout);
+      setText('sumError', error);
+      setText('sumUnknown', unknown);
+
+      const lastUpdateEl = document.getElementById('lastUpdate');
+      if (lastUpdateEl) {
+        lastUpdateEl.innerText = `Last system update: ${lastStatus.updated || 'n/a'}`;
+      }
+    }
+
+    function updateSinglePoint(point) {
+      const key = getPointKey(point.ip, point.ga);
+
+      const index = lastStatus.points.findIndex(
+        p => getPointKey(p.ip, p.ga) === key
+      );
+
+      if (index >= 0) {
+        lastStatus.points[index] = point;
+      } else {
+        lastStatus.points.push(point);
+      }
+
+      lastStatus.updated = point.updated || new Date().toISOString();
+
+      const statusEl = document.getElementById(getStatusElementId(point.ip, point.ga));
+
+      if (statusEl) {
+        const info = getStatusInfo(point.status);
+
+        statusEl.className = `status-badge ${info.cls}`;
+        statusEl.innerText = info.text;
+        statusEl.dataset.status = point.status;
+      }
+
+      const updatedEl = document.getElementById(
+        `updated-${safeId(point.ip)}-${safeId(point.ga)}`
+      );
+
+      if (updatedEl) {
+        updatedEl.innerText = point.updated || '';
+      }
+
+      updateSummaryCounters();
+    }
+
+    function setSseState(state) {
+      const dot = document.getElementById('sseDot');
+      const text = document.getElementById('sseText');
+
+      dot.classList.remove('connected', 'error');
+
+      if (state === 'connected') {
+        dot.classList.add('connected');
+        text.innerText = 'Live connection active';
+      } else if (state === 'error') {
+        dot.classList.add('error');
+        text.innerText = 'Live connection lost - retrying automatically';
+      } else {
+        text.innerText = 'Connecting...';
+      }
+    }
+
+    function startStatusStream() {
+      const eventSource = new EventSource('/api/status/stream');
+
+      eventSource.addEventListener('connected', () => {
+        console.log('SSE connected');
+        setSseState('connected');
+      });
+
+      eventSource.addEventListener('status-full', event => {
+        lastStatus = JSON.parse(event.data);
+        renderDashboard();
+      });
+
+      eventSource.addEventListener('status-point', event => {
+        const point = JSON.parse(event.data);
+        updateSinglePoint(point);
+      });
+
+      eventSource.onerror = () => {
+        console.warn('SSE connection lost. Browser will retry automatically.');
+        setSseState('error');
+      };
+    }
+
+    document.getElementById('reloadBtn').addEventListener('click', loadInitialData);
+
+    document.getElementById('backBtn').addEventListener('click', () => {
+      window.location.href = '/index.html';
+    });
+
+    loadInitialData();
+    startStatusStream();
+  </script>
+</body>
 </html>

@@ -1,28 +1,31 @@
 import knx from "knx";
 import fs from "fs/promises";
+import fetch from "node-fetch";
 import {
     OPCUAServer,
     Variant,
     DataType,
     StatusCodes
 } from "node-opcua";
-import { writeFile } from 'fs/promises';
 
 function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 const CONFIG_PATH = "./knxGroupAddress.json";
+
 const READ_TIMEOUT_MS = 2000;
 const DELAY_BETWEEN_READS_MS = 300;
 const CYCLE_DELAY_MS = 5000;
 const OPC_UA_PORT = 4840;
 
+const API_POINT_STATUS_URL = "http://localhost:3000/api/status/point";
+
 // key = `${ip}__${ga}`
 const runtimePoints = new Map();
+
 // key = ip
 const knxConnections = new Map();
-const STATUS_PATH = './knxStatus.json';
 
 async function loadConfig() {
     const data = await fs.readFile(CONFIG_PATH, "utf8");
@@ -113,13 +116,10 @@ function isKnxConnected(ip) {
 }
 
 async function readDatapoint(ip, item) {
-
     const MAX_RETRIES = 3;
 
     for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
-
         const result = await new Promise((resolve) => {
-
             let responded = false;
 
             const timeout = setTimeout(() => {
@@ -130,7 +130,6 @@ async function readDatapoint(ip, item) {
 
             try {
                 item.dp.read((src, value) => {
-
                     if (responded) return;
 
                     responded = true;
@@ -143,7 +142,6 @@ async function readDatapoint(ip, item) {
 
                     resolve("ok");
                 });
-
             } catch (err) {
                 clearTimeout(timeout);
                 console.error(`[${ip}] KNX READ ERROR on ${item.ga} (${item.dst}):`, err);
@@ -159,14 +157,34 @@ async function readDatapoint(ip, item) {
             return -1;
         }
 
-        console.warn(
-            `[${ip}] Retry ${attempt}/${MAX_RETRIES} failed for ${item.ga}`
-        );
+        console.warn(`[${ip}] Retry ${attempt}/${MAX_RETRIES} failed for ${item.ga}`);
     }
 
-    console.error(`[${ip}] KNX READ TIMEOUT after ${MAX_RETRIES} attempts on ${item.ga} (${item.dst})`);
+    console.error(
+        `[${ip}] KNX READ TIMEOUT after ${MAX_RETRIES} attempts on ${item.ga} (${item.dst})`
+    );
 
     return 99;
+}
+
+function sendPointStatusToApi(item, status) {
+    fetch(API_POINT_STATUS_URL, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            ip: item.ip,
+            ga: item.ga,
+            dst: item.dst,
+            status
+        })
+    }).catch((err) => {
+        console.error(
+            `[API] Failed to send point status ${item.ip} | ${item.ga}:`,
+            err.message || err
+        );
+    });
 }
 
 function createRuntimePoint(connection, point, ip, namespace, parentFolder) {
@@ -208,8 +226,8 @@ function createRuntimePoint(connection, point, ip, namespace, parentFolder) {
         dp,
         opcNode,
         getStatusValue: () => currentStatusValue,
-        setStatusValue: (v) => {
-            currentStatusValue = v;
+        setStatusValue: (value) => {
+            currentStatusValue = value;
         }
     };
 }
@@ -235,7 +253,6 @@ async function start() {
         browseName: "KNX"
     });
 
-    // key = ip
     const gatewayFolders = new Map();
 
     await server.start();
@@ -246,8 +263,9 @@ async function start() {
     while (true) {
         try {
             const config = normalizeConfig(await loadConfig());
+
             const configRuntimeKeys = new Set();
-            const configIps = new Set(config.gateways.map(g => g.IPRS));
+            const configIps = new Set(config.gateways.map(gateway => gateway.IPRS));
 
             for (const gateway of config.gateways) {
                 const ip = gateway.IPRS;
@@ -259,11 +277,13 @@ async function start() {
                 }
 
                 let gatewayFolder = gatewayFolders.get(ip);
+
                 if (!gatewayFolder) {
                     gatewayFolder = namespace.addObject({
                         componentOf: rootDevice,
                         browseName: sanitizeNodeName(ip)
                     });
+
                     gatewayFolders.set(ip, gatewayFolder);
                 }
 
@@ -288,6 +308,7 @@ async function start() {
                         );
 
                         runtimePoints.set(runtimeKey, runtimePoint);
+
                         console.log(`[CFG] Added point ${ip} | ${ga} (${point.dst})`);
                     } else if (existing.signature !== signature) {
                         try {
@@ -305,12 +326,13 @@ async function start() {
                         );
 
                         runtimePoints.set(runtimeKey, runtimePoint);
+
                         console.log(`[CFG] Updated point ${ip} | ${ga} (${point.dst})`);
                     }
                 }
             }
 
-            // מחיקה של נקודות שלא קיימות יותר בקובץ
+            // Remove points that are no longer in the config file
             for (const [runtimeKey, item] of runtimePoints.entries()) {
                 if (!configRuntimeKeys.has(runtimeKey)) {
                     try {
@@ -320,11 +342,12 @@ async function start() {
                     }
 
                     runtimePoints.delete(runtimeKey);
+
                     console.log(`[CFG] Removed point ${item.ip} | ${item.ga}`);
                 }
             }
 
-            // אפשר גם למחוק חיבורים ל-IP שכבר לא קיימים בקובץ
+            // Remove KNX connections for gateways that are no longer in the config file
             for (const [ip, state] of knxConnections.entries()) {
                 if (!configIps.has(ip)) {
                     try {
@@ -332,7 +355,9 @@ async function start() {
                     } catch {
                         // ignore
                     }
+
                     knxConnections.delete(ip);
+
                     console.log(`[CFG] Removed gateway connection ${ip}`);
                 }
             }
@@ -353,22 +378,20 @@ async function start() {
                         StatusCodes.Good
                     );
 
-                    console.log(`[OPCUA] Updated ${item.ip} | ${item.ga} (${item.dst}) => ${result}`);
+                    console.log(
+                        `[OPCUA] Updated ${item.ip} | ${item.ga} (${item.dst}) => ${result}`
+                    );
                 }
+
+                // Realtime update to Dashboard for each point
+                sendPointStatusToApi(item, result);
 
                 await delay(DELAY_BETWEEN_READS_MS);
             }
 
-            console.log(`[MAIN] Polling cycle finished. Waiting ${CYCLE_DELAY_MS} ms...\n`);
-
-            // write status snapshot for dashboard
-            try {
-                const points = Array.from(runtimePoints.values()).map(p => ({ ip: p.ip, ga: p.ga, dst: p.dst, status: p.getStatusValue() }));
-                const payload = { updated: new Date().toISOString(), points };
-                await writeFile(STATUS_PATH, JSON.stringify(payload, null, 2), 'utf8');
-            } catch (err) {
-                console.error('Failed to write status file:', err);
-            }
+            console.log(
+                `[MAIN] Polling cycle finished. Waiting ${CYCLE_DELAY_MS} ms...\n`
+            );
         } catch (err) {
             console.error(`[MAIN] Error:`, err.message || err);
         }
