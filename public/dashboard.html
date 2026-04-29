@@ -61,8 +61,7 @@
       margin-bottom: 18px;
     }
 
-    th,
-    td {
+    th, td {
       padding: 10px;
       border-bottom: 1px solid #eef3f8;
       text-align: left;
@@ -105,6 +104,11 @@
 
     .status-unknown {
       color: var(--muted);
+      font-weight: 800;
+    }
+
+    .status-offline {
+      color: var(--error);
       font-weight: 800;
     }
 
@@ -153,6 +157,7 @@
       font-size: 13px;
       color: #fff;
       opacity: 0.9;
+      margin-top: 6px;
     }
 
     .sse-dot {
@@ -181,7 +186,9 @@
         <div style="font-size:13px;letter-spacing:2px;font-weight:700;color:#fff;opacity:0.9">
           ABB STYLE TOOL
         </div>
+
         <h1>KNX Dashboard — Group Address Monitoring</h1>
+
         <div class="sse-indicator">
           <span id="sseDot" class="sse-dot"></span>
           <span id="sseText">Connecting...</span>
@@ -190,7 +197,6 @@
 
       <div style="display:flex;gap:10px;align-items:center">
         <button id="backBtn" class="ghost">Back</button>
-        <button id="reloadBtn">Reload Config</button>
       </div>
     </div>
   </header>
@@ -209,6 +215,11 @@
       points: []
     };
 
+    let lastLiveUpdateTime = Date.now();
+    let dashboardIsStale = false;
+
+    const STALE_TIMEOUT_MS = 15000;
+
     function safeId(value) {
       return String(value).replace(/[^a-zA-Z0-9_-]/g, '_');
     }
@@ -219,10 +230,6 @@
 
     function getStatusElementId(ip, ga) {
       return `status-${safeId(ip)}-${safeId(ga)}`;
-    }
-
-    function getRowElementId(ip, ga) {
-      return `row-${safeId(ip)}-${safeId(ga)}`;
     }
 
     function getStatusInfo(status) {
@@ -254,15 +261,20 @@
     }
 
     async function loadInitialData() {
-      const [cfgRes, statusRes] = await Promise.all([
-        fetch('/api/config'),
-        fetch('/api/status')
-      ]);
+      try {
+        const [cfgRes, statusRes] = await Promise.all([
+          fetch('/api/config'),
+          fetch('/api/status')
+        ]);
 
-      currentConfig = await cfgRes.json();
-      lastStatus = await statusRes.json();
+        currentConfig = await cfgRes.json();
+        lastStatus = await statusRes.json();
 
-      renderDashboard();
+        renderDashboard();
+      } catch (err) {
+        console.error('Failed to load dashboard data:', err);
+        setSseState('error', 'Server unavailable');
+      }
     }
 
     function buildStatusMap() {
@@ -360,7 +372,7 @@
           const info = getStatusInfo(statusValue);
 
           html += `
-            <tr id="${getRowElementId(gateway.IPRS, point.ga)}">
+            <tr>
               <td>${point.ga}</td>
               <td>${point.dst || ''}</td>
               <td>
@@ -431,12 +443,20 @@
       setText('sumUnknown', unknown);
 
       const lastUpdateEl = document.getElementById('lastUpdate');
+
       if (lastUpdateEl) {
         lastUpdateEl.innerText = `Last system update: ${lastStatus.updated || 'n/a'}`;
       }
     }
 
     function updateSinglePoint(point) {
+      lastLiveUpdateTime = Date.now();
+
+      if (dashboardIsStale) {
+        dashboardIsStale = false;
+        setSseState('connected', 'Live connection active');
+      }
+
       const key = getPointKey(point.ip, point.ga);
 
       const index = lastStatus.points.findIndex(
@@ -472,7 +492,36 @@
       updateSummaryCounters();
     }
 
-    function setSseState(state) {
+    function markDashboardAsStale() {
+      if (dashboardIsStale) return;
+
+      dashboardIsStale = true;
+
+      document.querySelectorAll('.status-badge').forEach(el => {
+        el.className = 'status-badge status-offline';
+        el.innerText = 'Offline';
+      });
+
+      const setText = (id, value) => {
+        const el = document.getElementById(id);
+        if (el) el.innerText = value;
+      };
+
+      setText('sumOk', 0);
+      setText('sumTimeout', 0);
+      setText('sumError', 0);
+      setText('sumUnknown', document.querySelectorAll('.status-badge').length);
+
+      const lastUpdateEl = document.getElementById('lastUpdate');
+
+      if (lastUpdateEl) {
+        lastUpdateEl.innerText = 'Last system update: no live data';
+      }
+
+      setSseState('error', 'No live data - server or KNX polling is offline');
+    }
+
+    function setSseState(state, customText) {
       const dot = document.getElementById('sseDot');
       const text = document.getElementById('sseText');
 
@@ -480,12 +529,12 @@
 
       if (state === 'connected') {
         dot.classList.add('connected');
-        text.innerText = 'Live connection active';
+        text.innerText = customText || 'Live connection active';
       } else if (state === 'error') {
         dot.classList.add('error');
-        text.innerText = 'Live connection lost - retrying automatically';
+        text.innerText = customText || 'Live connection lost - retrying automatically';
       } else {
-        text.innerText = 'Connecting...';
+        text.innerText = customText || 'Connecting...';
       }
     }
 
@@ -493,12 +542,17 @@
       const eventSource = new EventSource('/api/status/stream');
 
       eventSource.addEventListener('connected', () => {
-        console.log('SSE connected');
-        setSseState('connected');
+        lastLiveUpdateTime = Date.now();
+        setSseState('connected', 'Live connection active');
       });
 
       eventSource.addEventListener('status-full', event => {
+        lastLiveUpdateTime = Date.now();
+        dashboardIsStale = false;
+
         lastStatus = JSON.parse(event.data);
+
+        setSseState('connected', 'Live connection active');
         renderDashboard();
       });
 
@@ -508,12 +562,9 @@
       });
 
       eventSource.onerror = () => {
-        console.warn('SSE connection lost. Browser will retry automatically.');
-        setSseState('error');
+        setSseState('error', 'Live connection lost - retrying automatically');
       };
     }
-
-    document.getElementById('reloadBtn').addEventListener('click', loadInitialData);
 
     document.getElementById('backBtn').addEventListener('click', () => {
       window.location.href = '/index.html';
@@ -521,6 +572,14 @@
 
     loadInitialData();
     startStatusStream();
+
+    setInterval(() => {
+      const diff = Date.now() - lastLiveUpdateTime;
+
+      if (diff > STALE_TIMEOUT_MS) {
+        markDashboardAsStale();
+      }
+    }, 3000);
   </script>
 </body>
 </html>
