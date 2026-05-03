@@ -260,6 +260,16 @@
       };
     }
 
+    // Format ISO timestamp in Israel timezone (Asia/Jerusalem)
+    function formatIsrael(iso) {
+      try {
+        const d = new Date(iso);
+        return d.toLocaleString('en-IL', { timeZone: 'Asia/Jerusalem' });
+      } catch {
+        return iso;
+      }
+    }
+
     async function loadInitialData() {
       try {
         const [cfgRes, statusRes] = await Promise.all([
@@ -384,8 +394,8 @@
                   ${info.text}
                 </span>
               </td>
-              <td id="updated-${safeId(gateway.IPRS)}-${safeId(point.ga)}">
-                ${statusPoint?.updated || ''}
+                <td id="updated-${safeId(gateway.IPRS)}-${safeId(point.ga)}">
+                ${statusPoint?.updated ? formatIsrael(statusPoint.updated) : ''}
               </td>
             </tr>
           `;
@@ -399,7 +409,7 @@
 
       html += `
         <div id="lastUpdate" class="last-update">
-          Last system update: ${lastStatus.updated || 'n/a'}
+          Last system update: ${lastStatus.updated ? formatIsrael(lastStatus.updated) : 'n/a'}
         </div>
       `;
 
@@ -486,7 +496,7 @@
       );
 
       if (updatedEl) {
-        updatedEl.innerText = point.updated || '';
+        updatedEl.innerText = point.updated ? formatIsrael(point.updated) : '';
       }
 
       updateSummaryCounters();
