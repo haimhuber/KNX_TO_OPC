@@ -242,6 +242,34 @@
                 {
                     "ga": "28/1/59",
                     "dst": "LV_RightSide - FCU"
+                },
+                {
+                    "ga": "28/1/60",
+                    "dst": "Communication Room - Exit button"
+                },
+                {
+                    "ga": "28/1/61",
+                    "dst": "Communication Room - Sensor"
+                },
+                {
+                    "ga": "28/1/62",
+                    "dst": "Communication Room - Card reader"
+                },
+                {
+                    "ga": "28/1/63",
+                    "dst": "Emergency Stair East - Exit button"
+                },
+                {
+                    "ga": "28/1/64",
+                    "dst": "Emergency Stair East - Card reader"
+                },
+                {
+                    "ga": "28/1/65",
+                    "dst": "Emergency Stair West- Exit button"
+                },
+                {
+                    "ga": "28/1/66",
+                    "dst": "Emergency Stair West - Card reader"
                 }
             ]
         }
