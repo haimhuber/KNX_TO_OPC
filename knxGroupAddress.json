@@ -272,6 +272,255 @@
                     "dst": "Emergency Stair West - Card reader"
                 }
             ]
+        },
+        {
+            "IPRS": "192.168.1.73",
+            "points": [
+                {
+                    "ga": "27/0/0",
+                    "dst": "CEO - FCU"
+                },
+                {
+                    "ga": "27/0/1",
+                    "dst": "CEO - Tecteo"
+                },
+                {
+                    "ga": "27/0/2",
+                    "dst": "CEO - Acctuator"
+                },
+                {
+                    "ga": "27/0/3",
+                    "dst": "CEO - Sensor"
+                },
+                {
+                    "ga": "27/0/4",
+                    "dst": "OpenSpaceHSE - FCU"
+                },
+                {
+                    "ga": "27/0/5",
+                    "dst": "OpenSpaceHSE - Sensor"
+                },
+                {
+                    "ga": "27/0/6",
+                    "dst": "OpenSpaceHSE - Acctuator"
+                },
+                {
+                    "ga": "27/0/7",
+                    "dst": "OpenSpaceHSE - Tecteo"
+                },
+                {
+                    "ga": "27/0/8",
+                    "dst": "OpenSpaceFinance - FCU"
+                },
+                {
+                    "ga": "27/0/9",
+                    "dst": "OpenSpaceFinance - Sensor"
+                },
+                {
+                    "ga": "27/0/10",
+                    "dst": "OpenSpaceFinance - Acctuator"
+                },
+                {
+                    "ga": "27/0/11",
+                    "dst": "OpenSpaceFinance - Tecteo"
+                },
+                {
+                    "ga": "27/0/12",
+                    "dst": "OpenSpaceMarkting_HR - FCU"
+                },
+                {
+                    "ga": "27/0/13",
+                    "dst": "OpenSpaceMarkting_HR - Sensor"
+                },
+                {
+                    "ga": "27/0/14",
+                    "dst": "OpenSpaceMarkting_HR - Acctuator"
+                },
+                {
+                    "ga": "27/0/15",
+                    "dst": "OpenSpaceMarkting_HR - Tecteo"
+                },
+                {
+                    "ga": "27/0/16",
+                    "dst": "ABB_Lounge - Tecteo"
+                },
+                {
+                    "ga": "27/0/17",
+                    "dst": "ABB_Lounge - Acctuator"
+                },
+                {
+                    "ga": "27/0/18",
+                    "dst": "ABB_Lounge - FCU_1"
+                },
+                {
+                    "ga": "27/0/19",
+                    "dst": "ABB_Lounge - FCU_2"
+                },
+                {
+                    "ga": "27/0/20",
+                    "dst": "Ada_Yonath - Tecteo"
+                },
+                {
+                    "ga": "27/0/21",
+                    "dst": "Ada_Yonath - Sensor"
+                },
+                {
+                    "ga": "27/0/22",
+                    "dst": "CFO - Tecteo"
+                },
+                {
+                    "ga": "27/0/23",
+                    "dst": "CFO - Sensor"
+                },
+                {
+                    "ga": "27/0/24",
+                    "dst": "CFO - Acctuator"
+                },
+                {
+                    "ga": "27/0/25",
+                    "dst": "CFO - FCU"
+                },
+                {
+                    "ga": "27/0/26",
+                    "dst": "CFO - Screen_Room_Touch"
+                },
+                {
+                    "ga": "27/0/27",
+                    "dst": "Da_Vinci - FCU"
+                },
+                {
+                    "ga": "27/0/28",
+                    "dst": "Da_Vinci - Sensor"
+                },
+                {
+                    "ga": "27/0/29",
+                    "dst": "Da_Vinci - Tecteo"
+                },
+                {
+                    "ga": "27/0/30",
+                    "dst": "Einstein_Metting_Room - FCU"
+                },
+                {
+                    "ga": "27/0/31",
+                    "dst": "Einstein_Metting_Room - Tecteo"
+                },
+                {
+                    "ga": "27/0/32",
+                    "dst": "Einstein_Metting_Room - Sensor"
+                },
+                {
+                    "ga": "27/0/33",
+                    "dst": "Mamad_Marketing- Tecteo"
+                },
+                {
+                    "ga": "27/0/34",
+                    "dst": "Mamad_Marketing- FCU"
+                },
+                {
+                    "ga": "27/0/35",
+                    "dst": "Mamad_Marketing- Sensor"
+                },
+                {
+                    "ga": "27/0/36",
+                    "dst": "Hr_Manager- Tecteo"
+                },
+                {
+                    "ga": "27/0/37",
+                    "dst": "Hr_Manager- FCU"
+                },
+                {
+                    "ga": "27/0/38",
+                    "dst": "Hr_Manager- Sensor"
+                },
+                {
+                    "ga": "27/0/39",
+                    "dst": "Motion_IT- FCU"
+                },
+                {
+                    "ga": "27/0/40",
+                    "dst": "Motion_IT- Tecteo"
+                },
+                {
+                    "ga": "27/0/41",
+                    "dst": "Motion_IT- Sensor"
+                },
+                {
+                    "ga": "27/0/42",
+                    "dst": "Motion_IT- Acctuator"
+                },
+                {
+                    "ga": "27/0/43",
+                    "dst": "Motion_Sales- FCU"
+                },
+                {
+                    "ga": "27/0/44",
+                    "dst": "Motion_Sales- Tecteo"
+                },
+                {
+                    "ga": "27/0/45",
+                    "dst": "Motion_Sales - Sensor"
+                },
+                {
+                    "ga": "27/0/46",
+                    "dst": "Motion_Sales - Acctuator"
+                },
+                {
+                    "ga": "27/0/47",
+                    "dst": "Motion_IT_Manager- FCU"
+                },
+                {
+                    "ga": "27/0/48",
+                    "dst": "Motion_IT_Manager - Tecteo"
+                },
+                {
+                    "ga": "27/0/49",
+                    "dst": "Motion_IT_Manager - Sensor"
+                },
+                {
+                    "ga": "27/0/50",
+                    "dst": "Motion_IT_Manager - Acctuator"
+                },
+                {
+                    "ga": "27/0/51",
+                    "dst": "Motion_Manager- FCU"
+                },
+                {
+                    "ga": "27/0/52",
+                    "dst": "Motion_Manager - Tecteo"
+                },
+                {
+                    "ga": "27/0/53",
+                    "dst": "PhoneBoot_104- FCU"
+                },
+                {
+                    "ga": "27/0/54",
+                    "dst": "PhoneBoot_104 - Tecteo"
+                },
+                {
+                    "ga": "27/0/55",
+                    "dst": "PhoneBoot_103 - Tecteo"
+                },
+                {
+                    "ga": "27/0/56",
+                    "dst": "PhoneBoot_103 - Sensor"
+                },
+                {
+                    "ga": "27/0/57",
+                    "dst": "Security_Room - Tecteo"
+                },
+                {
+                    "ga": "27/0/58",
+                    "dst": "Electric_Board_B3- Dali_D1"
+                },
+                {
+                    "ga": "27/0/59",
+                    "dst": "Electric_Board_B3- Dali_D2"
+                },
+                {
+                    "ga": "27/0/60",
+                    "dst": "Electric_Board_B3- Dali_D3"
+                }
+            ]
         }
     ]
 }
