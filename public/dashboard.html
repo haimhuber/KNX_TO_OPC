@@ -91,7 +91,7 @@
     button.ghost {
       background: transparent;
       border: 1px solid var(--abb-red);
-      color: #fff;
+      color: #772a2a;
     }
 
     .status-ok {
@@ -121,12 +121,12 @@
 
     .status-badge {
       display: inline-block;
-      min-width: 84px;
-      padding: 4px 8px;
-      border-radius: 999px;
+      min-width: 68px;
+      padding: 2px 6px;
+      border-radius: 10px;
       background: #f8fafb;
       text-align: center;
-      font-size: 12px;
+      font-size: 11px;
       position: relative;
       line-height: 1;
     }
@@ -239,10 +239,23 @@
       </div>
 
       <div style="display:flex;gap:10px;align-items:center">
-        <button id="backBtn" class="ghost">Back</button>
+        <button id="backBtn" class="ghost">Back to Config</button>
       </div>
     </div>
   </header>
+
+  <!-- Password modal -->
+  <div id="pwModal" style="display:none;position:fixed;left:0;top:0;right:0;bottom:0;align-items:center;justify-content:center;background:rgba(0,0,0,0.5);z-index:60;">
+    <div style="background:#fff;padding:18px;border-radius:10px;min-width:320px;box-shadow:0 12px 40px rgba(0,0,0,0.5)">
+      <div style="font-weight:800;color:#111;margin-bottom:8px">Enter password to open Config</div>
+      <input id="pwInput" type="password" style="width:100%;padding:8px;border-radius:6px;border:1px solid #ddd;margin-bottom:10px" autofocus/>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button id="pwCancel" class="ghost" style="background:transparent;color:#111;border:1px solid #ccc">Cancel</button>
+        <button id="pwOk" style="background:#111;color:#fff">Open</button>
+      </div>
+      <div id="pwError" style="color:#dc2626;margin-top:8px;display:none">Invalid password</div>
+    </div>
+  </div>
 
   <main class="container">
     <div class="grid">
@@ -250,16 +263,24 @@
         Loading configuration...
       </div>
 
-      <aside id="faultsPanel" class="card" style="width:800px;min-width:260px;max-height:70vh;overflow:auto;">
+      <aside id="faultsPanel" class="card" style="width:920px;min-width:260px;max-height:70vh;overflow:auto;">
         <h3 class="faults-title" style="margin-top:0">Faulted Points</h3>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+          <label style="color:#6b7280;font-weight:700;font-size:13px;margin-right:6px">Filter GW:</label>
+          <select id="gwFilterSelect" style="padding:6px;border-radius:6px;border:1px solid #e5e7eb;background:#fff;color:#111">
+            <option value="">All</option>
+          </select>
+          <button id="gwFilterClear" class="ghost" style="margin-left:auto">Clear</button>
+        </div>
         <div id="faultsEmpty" style="color:#6b7280">No faults</div>
         <table id="faultsTable" style="width:100%;display:none;margin-top:8px;">
           <thead>
             <tr>
-              <th style="width:20%">GA</th>
-              <th style="width:20%">GW</th>
-              <th style="width:35%">Name</th>
-              <th style="width:25%">Status</th>
+              <th style="width:12%">GA</th>
+              <th style="width:18%">GW</th>
+              <th style="width:40%">Name</th>
+              <th style="width:18%">Status</th>
+              <th style="width:12%">Time</th>
             </tr>
           </thead>
           <tbody id="faultsBody"></tbody>
@@ -275,6 +296,9 @@
       updated: null,
       points: []
     };
+
+    // map key -> ISO timestamp when the fault was first seen
+    let faultFirstSeen = new Map();
 
     let lastLiveUpdateTime = Date.now();
     let dashboardIsStale = false;
@@ -447,7 +471,7 @@
               <td>${point.ga}</td>
               <td>${point.dst || ''}</td>
               <td>
-                <span 
+                <span
                   id="${getStatusElementId(gateway.IPRS, point.ga)}"
                   class="status-badge ${info.cls}"
                   data-status="${statusValue ?? ''}"
@@ -455,7 +479,7 @@
                   ${info.text}
                 </span>
               </td>
-                <td id="updated-${safeId(gateway.IPRS)}-${safeId(point.ga)}">
+              <td id="updated-${safeId(gateway.IPRS)}-${safeId(point.ga)}">
                 ${statusPoint?.updated ? formatIsrael(statusPoint.updated) : ''}
               </td>
             </tr>
@@ -476,7 +500,40 @@
 
       content.innerHTML = html;
 
+      populateGwFilter();
       refreshFaultsPanel();
+    }
+
+    let gwFilter = '';
+
+    function populateGwFilter() {
+      const sel = document.getElementById('gwFilterSelect');
+      if (!sel) return;
+      // clear existing options except All
+      sel.innerHTML = '<option value="">All</option>';
+      if (!currentConfig || !Array.isArray(currentConfig.gateways)) return;
+      for (const gw of currentConfig.gateways) {
+        const opt = document.createElement('option');
+        opt.value = gw.IPRS;
+        opt.text = gw.IPRS;
+        sel.appendChild(opt);
+      }
+
+      sel.value = gwFilter || '';
+
+      sel.onchange = () => {
+        gwFilter = sel.value || '';
+        refreshFaultsPanel();
+      };
+
+      const clearBtn = document.getElementById('gwFilterClear');
+      if (clearBtn) {
+        clearBtn.onclick = () => {
+          gwFilter = '';
+          sel.value = '';
+          refreshFaultsPanel();
+        };
+      }
     }
 
     function updateSummaryCounters() {
@@ -584,14 +641,23 @@
       faultsTable.style.display = 'table';
       faultsEmpty.style.display = 'none';
 
-      const rows = faulted.map(p => {
+      // apply GW filter if set
+      const visible = gwFilter ? faulted.filter(p => p.ip === gwFilter) : faulted;
+
+      const rows = visible.map(p => {
         const info = getStatusInfo(p.status);
+        const key = getPointKey(p.ip, p.ga);
+        const first = faultFirstSeen.has(key) ? faultFirstSeen.get(key) : (p.updated || null);
+        const timeStr = first ? formatIsrael(first) : '';
+        // shorten label
+        const short = info.text === 'Communication Error' ? 'Error' : (info.text === 'Timeout' ? 'Timeout' : info.text);
         return `
           <tr>
             <td>${p.ga}</td>
             <td>${p.ip}</td>
-            <td>${p.dst || ''}</td>
-            <td><span class="status-badge ${info.cls}">${info.text}</span></td>
+            <td title="${p.dst || ''}">${p.dst || ''}</td>
+            <td><span class="status-badge ${info.cls}" title="${info.text}">${short}</span></td>
+            <td style="white-space:nowrap">${timeStr}</td>
           </tr>
         `;
       }).join('');
@@ -658,6 +724,17 @@
         dashboardIsStale = false;
 
         lastStatus = JSON.parse(event.data);
+        // initialize fault first-seen timestamps for currently faulted points
+        for (const p of lastStatus.points || []) {
+          const key = getPointKey(p.ip, p.ga);
+          if (p.status !== 1 && !faultFirstSeen.has(key)) {
+            faultFirstSeen.set(key, p.updated || new Date().toISOString());
+          }
+          if (p.status === 1 && faultFirstSeen.has(key)) {
+            // recovered, remove first-seen
+            faultFirstSeen.delete(key);
+          }
+        }
 
         setSseState('connected', 'Live connection active');
         renderDashboard();
@@ -665,6 +742,17 @@
 
       eventSource.addEventListener('status-point', event => {
         const point = JSON.parse(event.data);
+        // update first-seen map: if fault and not present, set first-seen
+        const key = getPointKey(point.ip, point.ga);
+        if (point.status !== 1) {
+          if (!faultFirstSeen.has(key)) {
+            faultFirstSeen.set(key, point.updated || new Date().toISOString());
+          }
+        } else {
+          // recovered -> remove first seen
+          if (faultFirstSeen.has(key)) faultFirstSeen.delete(key);
+        }
+
         updateSinglePoint(point);
       });
 
@@ -674,8 +762,47 @@
     }
 
     document.getElementById('backBtn').addEventListener('click', () => {
-      window.location.href = '/index.html';
+      // show password modal instead of immediate redirect
+      document.getElementById('pwModal').style.display = 'flex';
+      document.getElementById('pwInput').value = '';
+      document.getElementById('pwError').style.display = 'none';
+      document.getElementById('pwInput').focus();
     });
+
+    // password handling
+    (function(){
+      const pwOk = document.getElementById('pwOk');
+      const pwCancel = document.getElementById('pwCancel');
+      const pwModal = document.getElementById('pwModal');
+      const pwInput = document.getElementById('pwInput');
+      const pwError = document.getElementById('pwError');
+
+      // obfuscated expected password (base64 of 'admin1234!')
+      const expectedB64 = 'YWRtaW4xMjM0IQ==';
+
+      function closeModal() {
+        pwModal.style.display = 'none';
+      }
+
+      pwCancel.addEventListener('click', closeModal);
+
+      pwOk.addEventListener('click', () => {
+        const entered = pwInput.value || '';
+        const b64 = btoa(entered);
+        if (b64 === expectedB64) {
+          // success
+          closeModal();
+          window.location.href = '/index.html';
+        } else {
+          pwError.style.display = 'block';
+        }
+      });
+
+      pwInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') pwOk.click();
+        if (e.key === 'Escape') closeModal();
+      });
+    })();
 
     loadInitialData();
     startStatusStream();

@@ -360,6 +360,9 @@
         <div class="subtitle">Import ETS files, map KNX group addresses, and generate a structured JSON configuration.</div>
       </div>
       <div class="abb-badge">ABB</div>
+      <div style="margin-left:16px">
+        <button id="gotoDashboardBtn" class="ghost">Go to Dashboard</button>
+      </div>
     </div>
   </header>
 
@@ -820,6 +823,26 @@
     });
 
     document.getElementById("addGatewayBtn").click();
+
+    // Go to Dashboard button behavior
+    document.getElementById('gotoDashboardBtn').addEventListener('click', async () => {
+      try {
+        const res = await fetch('/api/config');
+        if (!res.ok) throw new Error('Server error');
+        const cfg = await res.json();
+
+        // if no gateways, consider config missing
+        if (!cfg || !Array.isArray(cfg.gateways) || cfg.gateways.length === 0) {
+          alert('No configuration file found. Please create and save knxGroupAddress.json first.');
+          return;
+        }
+
+        // otherwise go to root (server will serve dashboard)
+        window.location.href = '/';
+      } catch (err) {
+        alert('Unable to reach server or config missing. Make sure knxGroupAddress.json exists.');
+      }
+    });
   </script>
 </body>
 </html>
